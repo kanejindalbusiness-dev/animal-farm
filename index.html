@@ -224,6 +224,23 @@
     transform: translate(-50%, -50%);
     pointer-events: none;
   }
+  @media (hover: none) and (pointer: coarse) {
+    .walker,
+    .walker .clip,
+    .walker .tap,
+    .walker .rig-svg {
+      pointer-events: none;
+    }
+    .walker .rig-svg * {
+      pointer-events: visiblePainted;
+    }
+    .walker .rig-svg defs,
+    .walker .rig-svg defs *,
+    .walker .rig-svg clipPath,
+    .walker .rig-svg clipPath * {
+      pointer-events: none;
+    }
+  }
   .clip {
     width: 100%;
     height: 100%;
@@ -3096,6 +3113,7 @@
 
     function tick(now) {
       requestAnimationFrame(tick);
+      phoneLayoutGen++;
       if (!farmOn) return;
       var sw = farm.clientWidth;
       var sh = farm.clientHeight;
@@ -3128,6 +3146,7 @@
         if (animal.birdList) placeBirds(animal, dt, sw, sh);
       }
       placeMarker(now);
+      syncPhoneTaps();
     }
 
     var titleArt = document.getElementById("title-art");
@@ -3485,29 +3504,599 @@
     });
 
     var tapStart = null;
-    function tappedAnimal(x, y) {
-      var best = -1;
-      var bestD = Infinity;
-      for (var i = 0; i < herd.length; i++) {
-        var animal = herd[i];
-        var pad = animal.tap;
-        var el = animal.el;
-        if (!pad || !el) continue;
-        var hit = pad.getBoundingClientRect();
-        if (hit.width < 1 || hit.height < 1) continue;
-        if (x < hit.left || x > hit.right || y < hit.top || y > hit.bottom) continue;
-        var box = el.getBoundingClientRect();
-        var cx = (box.left + box.right) / 2;
-        var cy = (box.top + box.bottom) / 2;
-        var dx = x - cx;
-        var dy = y - cy;
-        var d = dx * dx + dy * dy;
-        if (d < bestD) {
-          bestD = d;
-          best = i;
+    var phoneTapsLaid = false;
+    var phoneLayoutGen = 0;
+    var phoneLayoutDone = -1;
+    var TAP_MIN = 44;
+    var TAP_GAP = 0.75;
+
+    function paintList(animal) {
+      if (animal.paintNodes && animal.paintNodes.length) return animal.paintNodes;
+      var svg = animal.el ? animal.el.querySelector("svg") : null;
+      var keep = [];
+      if (!svg) return keep;
+      var all = svg.querySelectorAll("path, ellipse, rect, circle, polygon, polyline");
+      for (var i = 0; i < all.length; i++) {
+        var node = all[i];
+        if (node.closest && (node.closest("defs") || node.closest("clipPath"))) continue;
+        var cs = window.getComputedStyle(node);
+        var fill = cs.fill;
+        var stroke = cs.stroke;
+        var sw = parseFloat(cs.strokeWidth) || 0;
+        var op = parseFloat(cs.opacity || "1");
+        if (op === 0) continue;
+        if (!((fill && fill !== "none") || (stroke && stroke !== "none" && sw > 0))) continue;
+        keep.push(node);
+      }
+      if (keep.length) animal.paintNodes = keep;
+      return keep;
+    }
+
+    function paintedInk(animal) {
+      var nodes = paintList(animal);
+      var l = Infinity;
+      var t = Infinity;
+      var r = -Infinity;
+      var b = -Infinity;
+      var n = 0;
+      for (var i = 0; i < nodes.length; i++) {
+        var box = nodes[i].getBoundingClientRect();
+        if (box.width < 0.05 && box.height < 0.05) continue;
+        if (box.left < l) l = box.left;
+        if (box.top < t) t = box.top;
+        if (box.right > r) r = box.right;
+        if (box.bottom > b) b = box.bottom;
+        n++;
+      }
+      if (!n) return null;
+      return { l: l, t: t, r: r, b: b, w: r - l, h: b - t };
+    }
+
+    function viewBoxCss() {
+      var w = window.innerWidth || document.documentElement.clientWidth;
+      var h = window.innerHeight || document.documentElement.clientHeight;
+      var l = 0;
+      var t = 0;
+      var vv = window.visualViewport;
+      if (vv && vv.width > 1 && vv.height > 1) {
+        l = vv.offsetLeft || 0;
+        t = vv.offsetTop || 0;
+        if (vv.width < w) w = vv.width;
+        if (vv.height < h) h = vv.height;
+      }
+      var cw = document.documentElement.clientWidth;
+      var ch = document.documentElement.clientHeight;
+      if (cw > 1 && cw < w) w = cw;
+      if (ch > 1 && ch < h) h = ch;
+      return { l: l, t: t, w: w, h: h };
+    }
+
+    function tapLimits(it) {
+      return {
+        minL: it.ink.r - it.w,
+        maxL: it.ink.l,
+        minT: it.ink.b - it.h,
+        maxT: it.ink.t
+      };
+    }
+
+    function tapSlack(it) {
+      var lim = tapLimits(it);
+      return {
+        left: it.l - lim.minL,
+        right: lim.maxL - it.l,
+        up: it.t - lim.minT,
+        down: lim.maxT - it.t
+      };
+    }
+
+    function tapRoom(v) {
+      return v > 0 ? v : 0;
+    }
+
+    function clampTapCover(it) {
+      var lim = tapLimits(it);
+      if (it.l < lim.minL) it.l = lim.minL;
+      if (it.l > lim.maxL) it.l = lim.maxL;
+      if (it.t < lim.minT) it.t = lim.minT;
+      if (it.t > lim.maxT) it.t = lim.maxT;
+    }
+
+    function tapOverlap(a, b, gap) {
+      var ox = Math.min(a.l + a.w, b.l + b.w) - Math.max(a.l, b.l);
+      var oy = Math.min(a.t + a.h, b.t + b.h) - Math.max(a.t, b.t);
+      return ox > -gap && oy > -gap;
+    }
+
+    function fixedInk(ink) {
+      return {
+        l: ink.l,
+        t: ink.t,
+        w: ink.w,
+        h: ink.h,
+        ink: { l: ink.l, t: ink.t, r: ink.r, b: ink.b, w: ink.w, h: ink.h }
+      };
+    }
+
+    function separateTap(A, B, fixedB, gap) {
+      var ox = Math.min(A.l + A.w, B.l + B.w) - Math.max(A.l, B.l);
+      var oy = Math.min(A.t + A.h, B.t + B.h) - Math.max(A.t, B.t);
+      if (ox <= -gap || oy <= -gap) return true;
+      var sA = tapSlack(A);
+      var sB = fixedB ? { left: 0, right: 0, up: 0, down: 0 } : tapSlack(B);
+      var acx = A.l + A.w / 2;
+      var bcx = B.l + B.w / 2;
+      var acy = A.t + A.h / 2;
+      var bcy = B.t + B.h / 2;
+      var opts = [];
+      if (acx <= bcx) opts.push({ axis: "x", a: -1, b: 1, need: ox + gap, aRoom: tapRoom(sA.left), bRoom: tapRoom(fixedB ? 0 : sB.right) });
+      else opts.push({ axis: "x", a: 1, b: -1, need: ox + gap, aRoom: tapRoom(sA.right), bRoom: tapRoom(fixedB ? 0 : sB.left) });
+      if (acy <= bcy) opts.push({ axis: "y", a: -1, b: 1, need: oy + gap, aRoom: tapRoom(sA.up), bRoom: tapRoom(fixedB ? 0 : sB.down) });
+      else opts.push({ axis: "y", a: 1, b: -1, need: oy + gap, aRoom: tapRoom(sA.down), bRoom: tapRoom(fixedB ? 0 : sB.up) });
+      opts.sort(function (p, q) {
+        return (q.aRoom + q.bRoom - q.need) - (p.aRoom + p.bRoom - p.need);
+      });
+      for (var i = 0; i < opts.length; i++) {
+        var op = opts[i];
+        var avail = op.aRoom + op.bRoom;
+        if (avail + 0.001 < op.need) continue;
+        var aMove = avail > 0 ? Math.min(op.aRoom, op.need * (op.aRoom / avail)) : 0;
+        var bMove = op.need - aMove;
+        if (bMove > op.bRoom) {
+          aMove += bMove - op.bRoom;
+          bMove = op.bRoom;
+        }
+        if (aMove + bMove + 0.001 < op.need) continue;
+        if (op.axis === "x") {
+          A.l += op.a * aMove;
+          if (!fixedB) B.l += op.b * bMove;
+        } else {
+          A.t += op.a * aMove;
+          if (!fixedB) B.t += op.b * bMove;
+        }
+        clampTapCover(A);
+        if (!fixedB) clampTapCover(B);
+        return true;
+      }
+      return false;
+    }
+
+    function tapsClear(items, inkGap, padGap) {
+      for (var i = 0; i < items.length; i++) {
+        var A = items[i];
+        if (A.l > A.ink.l + 0.05 || A.t > A.ink.t + 0.05) return false;
+        if (A.l + A.w < A.ink.r - 0.05 || A.t + A.h < A.ink.b - 0.05) return false;
+        if (A.w < TAP_MIN - 0.05 || A.h < TAP_MIN - 0.05) return false;
+        for (var j = 0; j < items.length; j++) {
+          if (i === j) continue;
+          var B = items[j];
+          if (tapOverlap(A, B, padGap)) return false;
+          if (tapOverlap(A, B.ink, inkGap)) return false;
         }
       }
-      return best;
+      return true;
+    }
+
+    function relaxTaps(items, inkGap, padGap) {
+      for (var iter = 0; iter < 48; iter++) {
+        if (tapsClear(items, inkGap, padGap)) return true;
+        var moved = false;
+        for (var i = 0; i < items.length; i++) {
+          for (var j = 0; j < items.length; j++) {
+            if (i === j) continue;
+            if (!tapOverlap(items[i], items[j].ink, inkGap)) continue;
+            var beforeL = items[i].l;
+            var beforeT = items[i].t;
+            separateTap(items[i], fixedInk(items[j].ink), true, inkGap);
+            if (items[i].l !== beforeL || items[i].t !== beforeT) moved = true;
+          }
+        }
+        for (var a = 0; a < items.length; a++) {
+          for (var b = a + 1; b < items.length; b++) {
+            if (!tapOverlap(items[a], items[b], padGap)) continue;
+            var al = items[a].l;
+            var at = items[a].t;
+            var bl = items[b].l;
+            var bt = items[b].t;
+            separateTap(items[a], items[b], false, padGap);
+            if (items[a].l !== al || items[a].t !== at || items[b].l !== bl || items[b].t !== bt) moved = true;
+          }
+        }
+        if (tapsClear(items, inkGap, padGap)) return true;
+        if (!moved) break;
+      }
+      return tapsClear(items, inkGap, padGap);
+    }
+
+    function biasTapsAway(items) {
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        var cx = it.ink.l + it.ink.w / 2;
+        var cy = it.ink.t + it.ink.h / 2;
+        var fx = 0;
+        var fy = 0;
+        for (var j = 0; j < items.length; j++) {
+          if (i === j) continue;
+          var other = items[j];
+          var dx = cx - (other.ink.l + other.ink.w / 2);
+          var dy = cy - (other.ink.t + other.ink.h / 2);
+          var d2 = dx * dx + dy * dy;
+          if (d2 < 1) d2 = 1;
+          fx += dx / d2;
+          fy += dy / d2;
+        }
+        it.l = it.ink.l - (it.w - it.ink.w) / 2;
+        it.t = it.ink.t - (it.h - it.ink.h) / 2;
+        var mag = Math.sqrt(fx * fx + fy * fy);
+        if (mag < 1e-8) continue;
+        var ux = fx / mag;
+        var uy = fy / mag;
+        var s = tapSlack(it);
+        var move = 1e9;
+        if (ux < -1e-6) move = Math.min(move, tapRoom(s.left) / -ux);
+        else if (ux > 1e-6) move = Math.min(move, tapRoom(s.right) / ux);
+        if (uy < -1e-6) move = Math.min(move, tapRoom(s.up) / -uy);
+        else if (uy > 1e-6) move = Math.min(move, tapRoom(s.down) / uy);
+        if (!(move >= 0) || move > 1e8) continue;
+        it.l += ux * move;
+        it.t += uy * move;
+        clampTapCover(it);
+      }
+    }
+
+    function centerTaps(items) {
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        it.l = it.ink.l - (it.w - it.ink.w) / 2;
+        it.t = it.ink.t - (it.h - it.ink.h) / 2;
+      }
+    }
+
+    function copyTaps(items) {
+      var out = [];
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        out.push({ animal: it.animal, ink: it.ink, w: it.w, h: it.h, l: it.l, t: it.t });
+      }
+      return out;
+    }
+
+    function tapStaysClear(it, items, inkGap, padGap) {
+      if (it.l > it.ink.l + 0.05 || it.t > it.ink.t + 0.05) return false;
+      if (it.l + it.w < it.ink.r - 0.05 || it.t + it.h < it.ink.b - 0.05) return false;
+      for (var k = 0; k < items.length; k++) {
+        if (items[k] === it) continue;
+        if (tapOverlap(it, items[k], padGap) || tapOverlap(it, items[k].ink, inkGap)) return false;
+      }
+      return true;
+    }
+
+    function pullTapsIntoView(items, inkGap, padGap) {
+      var view = viewBoxCss();
+      var edge = 0.25;
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        var dx = 0;
+        var dy = 0;
+        if (it.l < view.l + edge) dx = view.l + edge - it.l;
+        var overR = it.l + it.w - (view.l + view.w - edge);
+        if (overR > 0) dx = -overR;
+        if (it.t < view.t + edge) dy = view.t + edge - it.t;
+        var overB = it.t + it.h - (view.t + view.h - edge);
+        if (overB > 0) dy = -overB;
+        if (dx === 0 && dy === 0) continue;
+        var baseL = it.l;
+        var baseT = it.t;
+        var lo = 0;
+        var hi = 1;
+        for (var step = 0; step < 10; step++) {
+          var mid = (lo + hi) / 2;
+          it.l = baseL + dx * mid;
+          it.t = baseT + dy * mid;
+          clampTapCover(it);
+          if (tapStaysClear(it, items, inkGap, padGap)) lo = mid;
+          else hi = mid;
+        }
+        it.l = baseL + dx * lo;
+        it.t = baseT + dy * lo;
+        clampTapCover(it);
+      }
+    }
+
+    function nudgeTapsAway(items, inkGap, padGap) {
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        var cx = it.ink.l + it.ink.w / 2;
+        var cy = it.ink.t + it.ink.h / 2;
+        var fx = 0;
+        var fy = 0;
+        for (var j = 0; j < items.length; j++) {
+          if (i === j) continue;
+          var other = items[j];
+          var dx = cx - (other.ink.l + other.ink.w / 2);
+          var dy = cy - (other.ink.t + other.ink.h / 2);
+          var d2 = dx * dx + dy * dy;
+          if (d2 < 1) d2 = 1;
+          fx += dx / d2;
+          fy += dy / d2;
+        }
+        var mag = Math.sqrt(fx * fx + fy * fy);
+        if (mag < 1e-8) continue;
+        var ux = fx / mag;
+        var uy = fy / mag;
+        var s = tapSlack(it);
+        var maxMove = 1e9;
+        if (ux < -1e-6) maxMove = Math.min(maxMove, tapRoom(s.left) / -ux);
+        else if (ux > 1e-6) maxMove = Math.min(maxMove, tapRoom(s.right) / ux);
+        if (uy < -1e-6) maxMove = Math.min(maxMove, tapRoom(s.up) / -uy);
+        else if (uy > 1e-6) maxMove = Math.min(maxMove, tapRoom(s.down) / uy);
+        if (!(maxMove > 0) || maxMove > 1e8) continue;
+        var lo = 0;
+        var hi = maxMove;
+        var baseL = it.l;
+        var baseT = it.t;
+        for (var step = 0; step < 10; step++) {
+          var mid = (lo + hi) / 2;
+          it.l = baseL + ux * mid;
+          it.t = baseT + uy * mid;
+          clampTapCover(it);
+          var ok = true;
+          for (var k = 0; k < items.length; k++) {
+            if (k === i) continue;
+            if (tapOverlap(it, items[k], padGap) || tapOverlap(it, items[k].ink, inkGap)) {
+              ok = false;
+              break;
+            }
+          }
+          if (ok) lo = mid;
+          else hi = mid;
+        }
+        it.l = baseL + ux * lo;
+        it.t = baseT + uy * lo;
+        clampTapCover(it);
+      }
+    }
+
+    function tapPenalty(items, inkGap, padGap) {
+      var p = 0;
+      for (var i = 0; i < items.length; i++) {
+        var A = items[i];
+        for (var j = 0; j < items.length; j++) {
+          if (i === j) continue;
+          var B = items[j];
+          var ox = Math.min(A.l + A.w, B.l + B.w) - Math.max(A.l, B.l);
+          var oy = Math.min(A.t + A.h, B.t + B.h) - Math.max(A.t, B.t);
+          if (ox > -padGap && oy > -padGap) p += (ox + padGap) * (oy + padGap);
+          ox = Math.min(A.l + A.w, B.ink.r) - Math.max(A.l, B.ink.l);
+          oy = Math.min(A.t + A.h, B.ink.b) - Math.max(A.t, B.ink.t);
+          if (ox > -inkGap && oy > -inkGap) p += (ox + inkGap) * (oy + inkGap) * 2;
+        }
+      }
+      return p;
+    }
+
+    function annealTaps(items, inkGap, padGap) {
+      var seed = 2166136261;
+      var i;
+      for (i = 0; i < items.length; i++) {
+        seed ^= Math.round(items[i].ink.l * 10);
+        seed = Math.imul(seed, 16777619);
+        seed ^= Math.round(items[i].ink.t * 10);
+        seed = Math.imul(seed, 16777619);
+      }
+      seed >>>= 0;
+      function rnd() {
+        seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+        return seed / 4294967296;
+      }
+      var saved = copyTaps(items);
+      for (var restart = 0; restart < 20; restart++) {
+        for (i = 0; i < items.length; i++) {
+          var it = items[i];
+          var minL = it.ink.r - it.w;
+          var maxL = it.ink.l;
+          var minT = it.ink.b - it.h;
+          var maxT = it.ink.t;
+          it.l = minL + rnd() * (maxL - minL);
+          it.t = minT + rnd() * (maxT - minT);
+        }
+        var temp = 14;
+        for (var step = 0; step < 360; step++) {
+          if (step % items.length === 0 && tapPenalty(items, inkGap, padGap) === 0) return true;
+          var it2 = items[step % items.length];
+          var oldL = it2.l;
+          var oldT = it2.t;
+          var before = tapPenalty(items, inkGap, padGap);
+          var loL = it2.ink.r - it2.w;
+          var hiL = it2.ink.l;
+          var loT = it2.ink.b - it2.h;
+          var hiT = it2.ink.t;
+          it2.l = Math.max(loL, Math.min(hiL, it2.l + (rnd() * 2 - 1) * temp));
+          it2.t = Math.max(loT, Math.min(hiT, it2.t + (rnd() * 2 - 1) * temp));
+          var after = tapPenalty(items, inkGap, padGap);
+          var allow = after <= before || rnd() < Math.exp(-(after - before) / (temp * 30 + 0.01));
+          if (!allow) {
+            it2.l = oldL;
+            it2.t = oldT;
+          }
+          temp *= 0.99;
+        }
+        if (tapPenalty(items, inkGap, padGap) === 0) return true;
+      }
+      for (i = 0; i < items.length; i++) {
+        items[i].l = saved[i].l;
+        items[i].t = saved[i].t;
+      }
+      return false;
+    }
+
+    function solvePhoneTaps(items) {
+      var gapSets = [
+        { ink: 0.5, pad: TAP_GAP },
+        { ink: 0.05, pad: TAP_GAP },
+        { ink: 0.05, pad: 0.2 },
+        { ink: 0, pad: 0.2 }
+      ];
+      var saved = copyTaps(items);
+      for (var g = 0; g < gapSets.length; g++) {
+        var inkGap = gapSets[g].ink;
+        var padGap = gapSets[g].pad;
+        for (var pass = 0; pass < 2; pass++) {
+          for (var i = 0; i < items.length; i++) {
+            items[i].l = saved[i].l;
+            items[i].t = saved[i].t;
+            items[i].w = saved[i].w;
+            items[i].h = saved[i].h;
+          }
+          if (pass === 0) biasTapsAway(items);
+          else centerTaps(items);
+          if (!relaxTaps(items, inkGap, padGap)) continue;
+          var relaxed = copyTaps(items);
+          nudgeTapsAway(items, inkGap, padGap);
+          if (!tapsClear(items, inkGap, padGap)) {
+            for (var n = 0; n < items.length; n++) {
+              items[n].l = relaxed[n].l;
+              items[n].t = relaxed[n].t;
+            }
+          }
+          var beforePull = copyTaps(items);
+          pullTapsIntoView(items, inkGap, padGap);
+          if (!tapsClear(items, inkGap, padGap)) {
+            for (var r = 0; r < items.length; r++) {
+              items[r].l = beforePull[r].l;
+              items[r].t = beforePull[r].t;
+            }
+          }
+          if (tapsClear(items, inkGap, padGap)) return true;
+        }
+      }
+      if (annealTaps(items, 0.05, 0.2) && tapsClear(items, 0.05, 0.2)) {
+        var annealed = copyTaps(items);
+        pullTapsIntoView(items, 0.05, 0.2);
+        if (!tapsClear(items, 0.05, 0.2)) {
+          for (var s = 0; s < items.length; s++) {
+            items[s].l = annealed[s].l;
+            items[s].t = annealed[s].t;
+          }
+        }
+        return tapsClear(items, 0.05, 0.2);
+      }
+      return false;
+    }
+
+    function resetPhoneTaps() {
+      for (var i = 0; i < herd.length; i++) {
+        var tap = herd[i].tap;
+        if (!tap) continue;
+        tap.style.width = "";
+        tap.style.height = "";
+        tap.style.left = "";
+        tap.style.top = "";
+        tap.style.right = "";
+        tap.style.bottom = "";
+        tap.style.transform = "";
+        tap.style.margin = "";
+        herd[i].tapRect = null;
+      }
+      phoneLayoutDone = -1;
+    }
+
+    function layoutPhoneTaps() {
+      if (!isPhone() || !farmOn) return false;
+      if (phoneLayoutDone === phoneLayoutGen && phoneTapsLaid) return true;
+      var items = [];
+      for (var i = 0; i < herd.length; i++) {
+        var animal = herd[i];
+        if (!animal.tap || !animal.el) continue;
+        var ink = paintedInk(animal);
+        if (!ink || !(ink.w > 0.5) || !(ink.h > 0.5)) continue;
+        var w = Math.max(TAP_MIN, ink.w);
+        var h = Math.max(TAP_MIN, ink.h);
+        items.push({
+          animal: animal,
+          ink: ink,
+          w: w,
+          h: h,
+          l: ink.l - (w - ink.w) / 2,
+          t: ink.t - (h - ink.h) / 2
+        });
+      }
+      if (!items.length) return false;
+      if (!solvePhoneTaps(items)) {
+        phoneLayoutDone = phoneLayoutGen;
+        phoneTapsLaid = true;
+        return false;
+      }
+      for (var k = 0; k < items.length; k++) {
+        var it = items[k];
+        var host = it.animal.el.getBoundingClientRect();
+        var tap = it.animal.tap;
+        tap.style.width = it.w + "px";
+        tap.style.height = it.h + "px";
+        tap.style.left = (it.l - host.left) + "px";
+        tap.style.top = (it.t - host.top) + "px";
+        tap.style.right = "auto";
+        tap.style.bottom = "auto";
+        tap.style.transform = "none";
+        tap.style.margin = "0";
+        it.animal.tapRect = { l: it.l, t: it.t, w: it.w, h: it.h };
+      }
+      phoneLayoutDone = phoneLayoutGen;
+      phoneTapsLaid = true;
+      return true;
+    }
+
+    function syncPhoneTaps() {
+      if (isPhone() && farmOn) {
+        layoutPhoneTaps();
+        phoneTapsLaid = true;
+        return;
+      }
+      if (phoneTapsLaid) {
+        resetPhoneTaps();
+        phoneTapsLaid = false;
+      }
+    }
+
+    function drawnAnimalAt(x, y) {
+      var nodes = document.elementsFromPoint ? document.elementsFromPoint(x, y) : null;
+      if (!nodes || !nodes.length) {
+        var one = document.elementFromPoint(x, y);
+        nodes = one ? [one] : [];
+      }
+      for (var i = 0; i < nodes.length; i++) {
+        var n = nodes[i];
+        var tag = n.tagName ? String(n.tagName).toLowerCase() : "";
+        if (tag !== "path" && tag !== "ellipse" && tag !== "rect" && tag !== "circle" && tag !== "polygon" && tag !== "polyline") continue;
+        var host = n;
+        while (host && host !== document) {
+          if (host.classList && host.classList.contains("walker")) {
+            for (var a = 0; a < herd.length; a++) {
+              if (herd[a].el === host) return a;
+            }
+            break;
+          }
+          host = host.parentNode;
+        }
+      }
+      return -1;
+    }
+
+    function tappedAnimal(x, y) {
+      layoutPhoneTaps();
+      var drawn = drawnAnimalAt(x, y);
+      if (drawn >= 0) return drawn;
+      var hit = -1;
+      for (var i = 0; i < herd.length; i++) {
+        var pad = herd[i].tap;
+        if (!pad) continue;
+        var rect = pad.getBoundingClientRect();
+        if (rect.width < 1 || rect.height < 1) continue;
+        if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) continue;
+        if (hit >= 0) return -1;
+        hit = i;
+      }
+      return hit;
     }
 
     function phoneTap(x, y) {
