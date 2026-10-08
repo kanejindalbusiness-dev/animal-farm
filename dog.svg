@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 370" width="470" height="370">
+  <g id="leg-back-far" data-pivot-x="196" data-pivot-y="236" style="transform-box: view-box; transform-origin: 196px 236px">
+    <defs><clipPath id="dog-clip-leg-back-far"><path d="M172.1,237.9 A24.0,24.0 0 0 1 219.9,234.1 C219.3,238.7 217.6,253.8 216.0,262.0 C214.3,270.1 210.9,276.6 210.0,283.0 C209.1,289.4 210.2,294.3 210.5,300.4 C210.7,306.4 211.3,316.1 211.5,319.2 L182.5,320.8 C182.4,317.8 182.3,309.2 181.5,302.7 C180.8,296.1 178.3,288.4 178.0,281.4 C177.8,274.4 181.0,267.7 180.0,260.4 C179.0,253.2 173.4,241.7 172.1,237.9 Z"/></clipPath></defs>
+    <path d="M172.1,237.9 A24.0,24.0 0 0 1 219.9,234.1 C219.3,238.7 217.6,253.8 216.0,262.0 C214.3,270.1 210.9,276.6 210.0,283.0 C209.1,289.4 210.2,294.3 210.5,300.4 C210.7,306.4 211.3,316.1 211.5,319.2 L182.5,320.8 C182.4,317.8 182.3,309.2 181.5,302.7 C180.8,296.1 178.3,288.4 178.0,281.4 C177.8,274.4 181.0,267.7 180.0,260.4 C179.0,253.2 173.4,241.7 172.1,237.9 Z" fill="#d29c55"/>
+    <g clip-path="url(#dog-clip-leg-back-far)"><path d="M160.0,236 C161.3,240.2 167.0,253.5 168.0,261.2 C169.0,268.9 165.8,275.5 166.0,282.2 C166.2,288.9 168.8,295.2 169.5,301.5 C170.2,307.8 170.3,316.9 170.5,320.0 L192.7,320.0 L191.7,301.5 L189.2,282.2 L192.6,261.2 L188.8,236 Z" fill="#5a3a30" opacity="0.2"/></g>
+    <path d="M172.1,237.9 A24.0,24.0 0 0 1 219.9,234.1 C219.3,238.7 217.6,253.8 216.0,262.0 C214.3,270.1 210.9,276.6 210.0,283.0 C209.1,289.4 210.2,294.3 210.5,300.4 C210.7,306.4 211.3,316.1 211.5,319.2 L182.5,320.8 C182.4,317.8 182.3,309.2 181.5,302.7 C180.8,296.1 178.3,288.4 178.0,281.4 C177.8,274.4 181.0,267.7 180.0,260.4 C179.0,253.2 173.4,241.7 172.1,237.9 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <defs><clipPath id="dog-clip-leg-back-far-paw"><path d="M180.5,315 C176.5,329 178.5,335 188.5,335 L217.5,335 C229.5,335 229.5,319 215.5,317 C211.5,313 211.5,311 210.5,309 Z"/></clipPath></defs>
+    <path d="M180.5,315 C176.5,329 178.5,335 188.5,335 L217.5,335 C229.5,335 229.5,319 215.5,317 C211.5,313 211.5,311 210.5,309 Z" fill="#d29c55"/>
+    <g clip-path="url(#dog-clip-leg-back-far-paw)"><path d="M168,330 L246,330 L246,339 L168,339 Z" fill="#5a3a30" opacity="0.2"/></g>
+    <path d="M180.5,315 C176.5,329 178.5,335 188.5,335 L217.5,335 C229.5,335 229.5,319 215.5,317 C211.5,313 211.5,311 210.5,309 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M213.5,334 L212.5,327 M221.5,334 L220.5,328" fill="none" stroke="#3a2a24" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+  <g id="leg-front-far" data-pivot-x="282" data-pivot-y="238" style="transform-box: view-box; transform-origin: 282px 238px">
+    <defs><clipPath id="dog-clip-leg-front-far"><path d="M260.0,238.9 A22.0,22.0 0 0 1 304.0,237.1 C303.3,241.3 300.9,254.5 300.0,262.2 C299.1,270.0 299.2,276.8 298.5,283.5 C297.8,290.2 296.4,296.3 296.0,302.3 C295.6,308.4 296.0,317.1 296.0,320.0 L268.0,320.0 C268.0,316.9 268.1,307.8 268.0,301.6 C267.9,295.4 267.8,289.1 267.5,282.7 C267.2,276.3 267.3,270.3 266.0,263.0 C264.8,255.7 261.0,242.9 260.0,238.9 Z"/></clipPath></defs>
+    <path d="M260.0,238.9 A22.0,22.0 0 0 1 304.0,237.1 C303.3,241.3 300.9,254.5 300.0,262.2 C299.1,270.0 299.2,276.8 298.5,283.5 C297.8,290.2 296.4,296.3 296.0,302.3 C295.6,308.4 296.0,317.1 296.0,320.0 L268.0,320.0 C268.0,316.9 268.1,307.8 268.0,301.6 C267.9,295.4 267.8,289.1 267.5,282.7 C267.2,276.3 267.3,270.3 266.0,263.0 C264.8,255.7 261.0,242.9 260.0,238.9 Z" fill="#d29c55"/>
+    <g clip-path="url(#dog-clip-leg-front-far)"><path d="M248.0,238 C249.0,242.1 252.8,255.1 254.0,262.6 C255.2,270.1 255.2,276.5 255.5,283.1 C255.8,289.7 255.9,295.8 256.0,302.0 C256.1,308.1 256.0,317.0 256.0,320.0 L277.8,320.0 L277.8,302.0 L278.4,283.1 L277.9,262.6 L275.4,238 Z" fill="#5a3a30" opacity="0.2"/></g>
+    <path d="M260.0,238.9 A22.0,22.0 0 0 1 304.0,237.1 C303.3,241.3 300.9,254.5 300.0,262.2 C299.1,270.0 299.2,276.8 298.5,283.5 C297.8,290.2 296.4,296.3 296.0,302.3 C295.6,308.4 296.0,317.1 296.0,320.0 L268.0,320.0 C268.0,316.9 268.1,307.8 268.0,301.6 C267.9,295.4 267.8,289.1 267.5,282.7 C267.2,276.3 267.3,270.3 266.0,263.0 C264.8,255.7 261.0,242.9 260.0,238.9 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <defs><clipPath id="dog-clip-leg-front-far-paw"><path d="M266.0,315 C262.0,329 264.0,335 274.0,335 L302.0,335 C314.0,335 314.0,319 300.0,317 C296.0,313 296.0,311 295.0,309 Z"/></clipPath></defs>
+    <path d="M266.0,315 C262.0,329 264.0,335 274.0,335 L302.0,335 C314.0,335 314.0,319 300.0,317 C296.0,313 296.0,311 295.0,309 Z" fill="#d29c55"/>
+    <g clip-path="url(#dog-clip-leg-front-far-paw)"><path d="M254,330 L330,330 L330,339 L254,339 Z" fill="#5a3a30" opacity="0.2"/></g>
+    <path d="M266.0,315 C262.0,329 264.0,335 274.0,335 L302.0,335 C314.0,335 314.0,319 300.0,317 C296.0,313 296.0,311 295.0,309 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M298.0,334 L297.0,327 M306.0,334 L305.0,328" fill="none" stroke="#3a2a24" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+  <g id="tail" data-pivot-x="140" data-pivot-y="202" style="transform-box: view-box; transform-origin: 140px 202px">
+    <defs><clipPath id="dog-clip-tail"><path d="M146 206 C126 200 110 184 106 164 C104 152 108 140 116 136 C124 134 128 142 126 152 C126 168 136 180 154 188 Z"/></clipPath></defs>
+    <path d="M146 206 C126 200 110 184 106 164 C104 152 108 140 116 136 C124 134 128 142 126 152 C126 168 136 180 154 188 Z" fill="#ebb469"/>
+    <g clip-path="url(#dog-clip-tail)"><path d="M98 130 L134 130 L132 156 C122 158 110 156 98 150 Z" fill="#f9e0b2"/><path d="M100 170 C114 194 134 204 164 200 L164 220 L94 220 Z" fill="#5a3a30" opacity="0.15"/></g>
+    <path d="M146 206 C126 200 110 184 106 164 C104 152 108 140 116 136 C124 134 128 142 126 152 C126 168 136 180 154 188 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+  <g id="leg-back-near" data-pivot-x="170" data-pivot-y="240" style="transform-box: view-box; transform-origin: 170px 240px">
+    <defs><clipPath id="dog-clip-leg-back-near"><path d="M146.1,241.9 A24.0,24.0 0 0 1 193.9,238.1 C193.3,242.7 191.6,257.6 190.0,265.7 C188.3,273.8 184.9,280.1 184.0,286.5 C183.1,292.8 184.2,297.6 184.5,303.6 C184.7,309.5 185.3,319.1 185.5,322.2 L156.5,323.8 C156.4,320.8 156.3,312.4 155.5,305.9 C154.8,299.4 152.3,291.8 152.0,284.8 C151.8,277.9 155.0,271.3 154.0,264.1 C153.0,257.0 147.4,245.6 146.1,241.9 Z"/></clipPath></defs>
+    <path d="M146.1,241.9 A24.0,24.0 0 0 1 193.9,238.1 C193.3,242.7 191.6,257.6 190.0,265.7 C188.3,273.8 184.9,280.1 184.0,286.5 C183.1,292.8 184.2,297.6 184.5,303.6 C184.7,309.5 185.3,319.1 185.5,322.2 L156.5,323.8 C156.4,320.8 156.3,312.4 155.5,305.9 C154.8,299.4 152.3,291.8 152.0,284.8 C151.8,277.9 155.0,271.3 154.0,264.1 C153.0,257.0 147.4,245.6 146.1,241.9 Z" fill="#ebb469"/>
+    <g clip-path="url(#dog-clip-leg-back-near)"><path d="M134.0,240 C135.3,244.2 141.0,257.3 142.0,264.9 C143.0,272.5 139.8,279.0 140.0,285.6 C140.2,292.3 142.8,298.5 143.5,304.7 C144.2,311.0 144.3,320.0 144.5,323.0 L166.7,323.0 L165.7,304.7 L163.2,285.6 L166.6,264.9 L162.8,240 Z" fill="#5a3a30" opacity="0.15"/></g>
+    <path d="M146.1,241.9 A24.0,24.0 0 0 1 193.9,238.1 C193.3,242.7 191.6,257.6 190.0,265.7 C188.3,273.8 184.9,280.1 184.0,286.5 C183.1,292.8 184.2,297.6 184.5,303.6 C184.7,309.5 185.3,319.1 185.5,322.2 L156.5,323.8 C156.4,320.8 156.3,312.4 155.5,305.9 C154.8,299.4 152.3,291.8 152.0,284.8 C151.8,277.9 155.0,271.3 154.0,264.1 C153.0,257.0 147.4,245.6 146.1,241.9 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <defs><clipPath id="dog-clip-leg-back-near-paw"><path d="M154.5,318 C150.5,332 152.5,338 162.5,338 L191.5,338 C203.5,338 203.5,322 189.5,320 C185.5,316 185.5,314 184.5,312 Z"/></clipPath></defs>
+    <path d="M154.5,318 C150.5,332 152.5,338 162.5,338 L191.5,338 C203.5,338 203.5,322 189.5,320 C185.5,316 185.5,314 184.5,312 Z" fill="#f9e0b2"/>
+    <g clip-path="url(#dog-clip-leg-back-near-paw)"><path d="M142,333 L220,333 L220,342 L142,342 Z" fill="#5a3a30" opacity="0.15"/></g>
+    <path d="M154.5,318 C150.5,332 152.5,338 162.5,338 L191.5,338 C203.5,338 203.5,322 189.5,320 C185.5,316 185.5,314 184.5,312 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M187.5,337 L186.5,330 M195.5,337 L194.5,331" fill="none" stroke="#3a2a24" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+  <g id="leg-front-near" data-pivot-x="306" data-pivot-y="242" style="transform-box: view-box; transform-origin: 306px 242px">
+    <defs><clipPath id="dog-clip-leg-front-near"><path d="M284.0,242.9 A22.0,22.0 0 0 1 328.0,241.1 C327.3,245.2 324.9,258.3 324.0,265.9 C323.1,273.6 323.2,280.3 322.5,286.9 C321.8,293.6 320.4,299.6 320.0,305.6 C319.6,311.6 320.0,320.1 320.0,323.0 L292.0,323.0 C292.0,320.0 292.1,310.9 292.0,304.8 C291.9,298.7 291.8,292.5 291.5,286.2 C291.2,279.8 291.3,273.9 290.0,266.7 C288.8,259.5 285.0,246.9 284.0,242.9 Z"/></clipPath></defs>
+    <path d="M284.0,242.9 A22.0,22.0 0 0 1 328.0,241.1 C327.3,245.2 324.9,258.3 324.0,265.9 C323.1,273.6 323.2,280.3 322.5,286.9 C321.8,293.6 320.4,299.6 320.0,305.6 C319.6,311.6 320.0,320.1 320.0,323.0 L292.0,323.0 C292.0,320.0 292.1,310.9 292.0,304.8 C291.9,298.7 291.8,292.5 291.5,286.2 C291.2,279.8 291.3,273.9 290.0,266.7 C288.8,259.5 285.0,246.9 284.0,242.9 Z" fill="#ebb469"/>
+    <g clip-path="url(#dog-clip-leg-front-near)"><path d="M272.0,242 C273.0,246.1 276.8,258.9 278.0,266.3 C279.2,273.7 279.2,280.1 279.5,286.6 C279.8,293.0 279.9,299.1 280.0,305.2 C280.1,311.3 280.0,320.0 280.0,323.0 L301.8,323.0 L301.8,305.2 L302.4,286.6 L301.9,266.3 L299.4,242 Z" fill="#5a3a30" opacity="0.15"/></g>
+    <path d="M284.0,242.9 A22.0,22.0 0 0 1 328.0,241.1 C327.3,245.2 324.9,258.3 324.0,265.9 C323.1,273.6 323.2,280.3 322.5,286.9 C321.8,293.6 320.4,299.6 320.0,305.6 C319.6,311.6 320.0,320.1 320.0,323.0 L292.0,323.0 C292.0,320.0 292.1,310.9 292.0,304.8 C291.9,298.7 291.8,292.5 291.5,286.2 C291.2,279.8 291.3,273.9 290.0,266.7 C288.8,259.5 285.0,246.9 284.0,242.9 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <defs><clipPath id="dog-clip-leg-front-near-paw"><path d="M290.0,318 C286.0,332 288.0,338 298.0,338 L326.0,338 C338.0,338 338.0,322 324.0,320 C320.0,316 320.0,314 319.0,312 Z"/></clipPath></defs>
+    <path d="M290.0,318 C286.0,332 288.0,338 298.0,338 L326.0,338 C338.0,338 338.0,322 324.0,320 C320.0,316 320.0,314 319.0,312 Z" fill="#f9e0b2"/>
+    <g clip-path="url(#dog-clip-leg-front-near-paw)"><path d="M278,333 L354,333 L354,342 L278,342 Z" fill="#5a3a30" opacity="0.15"/></g>
+    <path d="M290.0,318 C286.0,332 288.0,338 298.0,338 L326.0,338 C338.0,338 338.0,322 324.0,320 C320.0,316 320.0,314 319.0,312 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M322.0,337 L321.0,330 M330.0,337 L329.0,331" fill="none" stroke="#3a2a24" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+  <g id="body" data-pivot-x="236" data-pivot-y="226" style="transform-box: view-box; transform-origin: 236px 226px">
+    <defs><clipPath id="dog-clip-body"><path d="M168,186 C202,176 252,182 288,180 C318,179 336,198 338,222 C340,248 324,264 298,268 C264,272 216,270 182,268 C152,266 134,246 136,224 C138,204 150,192 168,186 Z"/></clipPath></defs>
+    <path d="M168,186 C202,176 252,182 288,180 C318,179 336,198 338,222 C340,248 324,264 298,268 C264,272 216,270 182,268 C152,266 134,246 136,224 C138,204 150,192 168,186 Z" fill="#ebb469"/>
+    <g clip-path="url(#dog-clip-body)"><path d="M298,192 C328,196 348,218 342,242 C336,262 318,270 294,270 C306,248 308,218 298,192 Z" fill="#f9e0b2"/><path d="M120,248 C200,274 300,278 360,240 L360,300 L120,300 Z" fill="#5a3a30" opacity="0.15"/><path d="M158,240 C168,220 192,214 210,226" fill="none" stroke="#5a3a30" stroke-width="4" stroke-linecap="round" opacity="0.2"/><path d="M180,190 C222,182 262,186 292,184" fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round" opacity="0.35"/></g>
+    <path d="M168,186 C202,176 252,182 288,180 C318,179 336,198 338,222 C340,248 324,264 298,268 C264,272 216,270 182,268 C152,266 134,246 136,224 C138,204 150,192 168,186 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+  <g id="head" data-pivot-x="310" data-pivot-y="194" style="transform-box: view-box; transform-origin: 310px 194px">
+    <path d="M372 78 C384 64 404 66 412 78 C416 90 410 104 402 110 C396 96 386 84 372 78 Z" fill="#b27a3b" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <defs><clipPath id="dog-clip-skull"><path d="M292 134 C290 94 324 70 360 74 C396 78 416 106 414 138 C412 170 390 190 358 192 C322 194 294 174 292 134 Z"/></clipPath></defs>
+    <path d="M292 134 C290 94 324 70 360 74 C396 78 416 106 414 138 C412 170 390 190 358 192 C322 194 294 174 292 134 Z" fill="#ebb469"/>
+    <g clip-path="url(#dog-clip-skull)"><path d="M288 168 C322 196 372 200 418 168 L418 212 L288 212 Z" fill="#5a3a30" opacity="0.15"/><path d="M328 86 C344 78 364 78 380 84" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.35"/></g>
+    <path d="M292 134 C290 94 324 70 360 74 C396 78 416 106 414 138 C412 170 390 190 358 192 C322 194 294 174 292 134 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <g id="jaw" data-pivot-x="372" data-pivot-y="168" style="transform-box: view-box; transform-origin: 372px 168px">
+      <path d="M370 168 L426 168 C428 158 426 148 422 140 L372 158 Z" fill="#7a3436"/>
+      <path d="M384 170 C392 166 410 166 418 170 C418 178 412 182 402 182 C392 182 386 178 384 170 Z" fill="#f08a8f"/>
+      <path d="M401 170 L401 178" fill="none" stroke="#3a2a24" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" opacity="0.4"/>
+      <defs><clipPath id="dog-clip-jaw"><path d="M370 166 C384 172 406 174 422 171 C426 178 418 186 406 188 C390 190 376 185 368 176 C366 171 367 168 370 166 Z"/></clipPath></defs>
+      <path d="M370 166 C384 172 406 174 422 171 C426 178 418 186 406 188 C390 190 376 185 368 176 C366 171 367 168 370 166 Z" fill="#f9e0b2"/>
+      <g clip-path="url(#dog-clip-jaw)"><path d="M360 182 C382 194 412 196 436 182 L436 202 L360 202 Z" fill="#5a3a30" opacity="0.15"/></g>
+      <path d="M370 166 C384 172 406 174 422 171 C426 178 418 186 406 188 C390 190 376 185 368 176 C366 171 367 168 370 166 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    </g>
+    <defs><clipPath id="dog-clip-muzzle"><path d="M362 132 C384 118 422 122 436 138 C446 152 440 170 422 174 C402 178 376 176 366 166 C356 156 354 140 362 132 Z"/></clipPath></defs>
+    <path d="M362 132 C384 118 422 122 436 138 C446 152 440 170 422 174 C402 178 376 176 366 166 C356 156 354 140 362 132 Z" fill="#f9e0b2"/>
+    <g clip-path="url(#dog-clip-muzzle)"><path d="M358 164 C382 178 422 178 444 162 L444 182 L358 182 Z" fill="#5a3a30" opacity="0.15"/><path d="M384 128 C396 124 410 124 420 128" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.4"/></g>
+    <path d="M362 132 C384 118 422 122 436 138 C446 152 440 170 422 174 C402 178 376 176 366 166 C356 156 354 140 362 132 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M416 152 C416 158 412 164 406 166" fill="none" stroke="#3a2a24" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+    <defs><clipPath id="dog-clip-nose"><path d="M424 130 C432 126 444 128 447 136 C449 144 442 150 435 150 C428 150 422 144 422 138 C422 134 423 132 424 130 Z"/></clipPath></defs>
+    <path d="M424 130 C432 126 444 128 447 136 C449 144 442 150 435 150 C428 150 422 144 422 138 C422 134 423 132 424 130 Z" fill="#3a2a24"/>
+    <g clip-path="url(#dog-clip-nose)"><path d="M430 134 C434 132 438 132 441 134" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.5"/></g>
+    <path d="M424 130 C432 126 444 128 447 136 C449 144 442 150 435 150 C428 150 422 144 422 138 C422 134 423 132 424 130 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <ellipse cx="364" cy="122" rx="11.4" ry="14.2" fill="#2b201d"/>
+    <circle cx="368.3" cy="116.3" r="4.4" fill="#ffffff"/>
+    <circle cx="360.7" cy="128.7" r="1.9" fill="#ffffff"/>
+    <path d="M352 98 C359 92 370 92 376 96" fill="none" stroke="#3a2a24" stroke-width="3.4" stroke-linejoin="round" stroke-linecap="round"/>
+    <ellipse cx="348" cy="154" rx="12" ry="7" fill="#f39a98" opacity="0.45"/>
+    <defs><clipPath id="dog-clip-ear"><path d="M318 90 C296 86 280 110 282 142 C284 170 298 186 312 180 C326 174 330 150 332 128 C334 108 330 94 318 90 Z"/></clipPath></defs>
+    <path d="M318 90 C296 86 280 110 282 142 C284 170 298 186 312 180 C326 174 330 150 332 128 C334 108 330 94 318 90 Z" fill="#c98a45"/>
+    <g clip-path="url(#dog-clip-ear)"><path d="M272 152 C292 178 322 182 342 162 L342 202 L272 202 Z" fill="#5a3a30" opacity="0.18"/></g>
+    <path d="M318 90 C296 86 280 110 282 142 C284 170 298 186 312 180 C326 174 330 150 332 128 C334 108 330 94 318 90 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+</svg>

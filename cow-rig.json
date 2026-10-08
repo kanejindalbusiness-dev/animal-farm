@@ -1,0 +1,102 @@
+{
+  "file": "cow.svg",
+  "viewBox": "0 0 600 480",
+  "groundLineY": 446,
+  "facing": "right",
+  "paintOrderBackToFront": [
+    "leg-back-far",
+    "leg-front-far",
+    "tail",
+    "body",
+    "leg-back-near",
+    "leg-front-near",
+    "head"
+  ],
+  "rotationSign": "CSS rotate(); positive = clockwise on screen",
+  "parts": [
+    {
+      "id": "leg-back-far",
+      "pivot": {
+        "x": 222,
+        "y": 266
+      },
+      "description": "Far hind leg (darker tone); pivot at the hip (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "leg-front-far",
+      "pivot": {
+        "x": 364,
+        "y": 278
+      },
+      "description": "Far front leg (darker tone); pivot at the shoulder (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "tail",
+      "pivot": {
+        "x": 146,
+        "y": 200
+      },
+      "description": "Tail with dark tuft; pivot at the tail root on the rump (+ swings the tuft out behind, - tucks it toward the legs; near -30 the tuft hides behind the near hind leg, so -15 to +30 reads best).",
+      "safeRotationDeg": [
+        -30,
+        30
+      ]
+    },
+    {
+      "id": "body",
+      "pivot": {
+        "x": 290,
+        "y": 262
+      },
+      "description": "Torso with neck, black patches and udder; pivot near the centre of mass for a gentle sway or tilt.",
+      "safeRotationDeg": [
+        -4,
+        4
+      ]
+    },
+    {
+      "id": "leg-back-near",
+      "pivot": {
+        "x": 190,
+        "y": 266
+      },
+      "description": "Near hind leg with a black patch; pivot at the hip (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "leg-front-near",
+      "pivot": {
+        "x": 398,
+        "y": 280
+      },
+      "description": "Near front leg and hoof; pivot at the shoulder (+ swings the hoof back, - swings it forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "head",
+      "pivot": {
+        "x": 430,
+        "y": 205
+      },
+      "description": "Head with muzzle, eye, ear and both horns; pivot at the neck joint (+ nods down to eat, - lifts).",
+      "safeRotationDeg": [
+        -20,
+        20
+      ]
+    }
+  ]
+}

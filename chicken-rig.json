@@ -1,0 +1,87 @@
+{
+  "file": "chicken.svg",
+  "viewBox": "0 0 360 330",
+  "groundLineY": 304,
+  "facing": "right",
+  "paintOrderBackToFront": [
+    "leg-far",
+    "leg-near",
+    "body",
+    "tail",
+    "head"
+  ],
+  "rotationSign": "CSS rotate(); positive = clockwise on screen",
+  "peck": {
+    "pose": {
+      "body": 30,
+      "head": 66
+    },
+    "howTo": "Rotate #body +30 (tips the hen forward on her hips) and #head +66 (inside #body, so it adds to the body tilt). The beak tip then touches the ground line (about x 285). Return both to 0 to stand up. Head alone (+60) gives a nod that does not reach the ground."
+  },
+  "scaleToCowUnits": 0.629,
+  "heightRelativeToCow": 0.44,
+  "parts": [
+    {
+      "id": "leg-far",
+      "pivot": {
+        "x": 166,
+        "y": 236
+      },
+      "description": "Far leg and toes (darker); pivot at the hip under the feathers (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "leg-near",
+      "pivot": {
+        "x": 148,
+        "y": 238
+      },
+      "description": "Near leg and toes; pivot at the hip under the feathers (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "body",
+      "pivot": {
+        "x": 156,
+        "y": 236
+      },
+      "description": "Torso with wing; pivot at the hips over the legs. Contains 'tail' and 'head', so rotating it tips the whole hen (+ forward to peck, - leans back).",
+      "safeRotationDeg": [
+        -10,
+        35
+      ]
+    },
+    {
+      "id": "tail",
+      "pivot": {
+        "x": 106,
+        "y": 186
+      },
+      "description": "Tail feathers; nested in 'body', pivot at the root (+ tips forward/upright, - tips back/down).",
+      "safeRotationDeg": [
+        -20,
+        25
+      ],
+      "parent": "body"
+    },
+    {
+      "id": "head",
+      "pivot": {
+        "x": 200,
+        "y": 198
+      },
+      "description": "Neck and head with comb, beak and wattle; nested in 'body' and drawn behind the breast so the neck base never shows; pivot at the base of the neck (+ dips forward/down to peck, - lifts).",
+      "safeRotationDeg": [
+        -20,
+        70
+      ],
+      "parent": "body"
+    }
+  ]
+}

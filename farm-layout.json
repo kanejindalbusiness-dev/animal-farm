@@ -1,0 +1,249 @@
+{
+  "file": "farm.svg",
+  "viewBox": "0 0 1280 720",
+  "source": "positions measured from v2/farm-wide.jpg (src/measure_v2.py -> src/layout.json)",
+  "layers": [
+    "sky",
+    "sun",
+    "clouds",
+    "hills",
+    "field",
+    "trees",
+    "paths",
+    "coop",
+    "barn",
+    "pen (pen-back, pen-front)",
+    "hedge",
+    "pond",
+    "foreground"
+  ],
+  "barn": {
+    "frontFace": {
+      "x": [
+        522,
+        650
+      ],
+      "baseY": 344,
+      "peak": [
+        586,
+        214
+      ]
+    },
+    "leanTo": {
+      "x": [
+        478,
+        524
+      ]
+    },
+    "sideWall": {
+      "x": [
+        650,
+        722
+      ]
+    },
+    "doors": {
+      "x": [
+        552,
+        620
+      ],
+      "y": [
+        290,
+        344
+      ]
+    },
+    "cupolaTop": [
+      621,
+      172
+    ],
+    "v2WallsBBox": [
+      485,
+      220,
+      652,
+      343
+    ],
+    "v2RoofBBox": [
+      582,
+      199,
+      721,
+      286
+    ]
+  },
+  "barnYard": {
+    "bbox": [
+      493,
+      346,
+      723,
+      453
+    ],
+    "note": "dirt yard in front of the barn doors"
+  },
+  "pathLeft": {
+    "bbox": [
+      194,
+      310,
+      482,
+      719
+    ],
+    "top": [
+      470,
+      312
+    ],
+    "bottom": [
+      [
+        197,
+        720
+      ],
+      [
+        354,
+        720
+      ]
+    ]
+  },
+  "pathRight": {
+    "bbox": [
+      875,
+      309,
+      1279,
+      719
+    ],
+    "top": [
+      1205,
+      310
+    ],
+    "bottom": [
+      [
+        1103,
+        720
+      ],
+      [
+        1246,
+        720
+      ]
+    ],
+    "note": "S-curve past the left side of the pond"
+  },
+  "coop": {
+    "house": {
+      "x": [
+        70,
+        214
+      ],
+      "y": [
+        264,
+        386
+      ]
+    },
+    "door": [
+      164,
+      386
+    ],
+    "runFence": {
+      "x": [
+        22,
+        324
+      ],
+      "y": [
+        296,
+        420
+      ]
+    },
+    "coopYard": [
+      180,
+      372,
+      368,
+      468
+    ]
+  },
+  "pen": {
+    "fenceRingCentre": [
+      835.0,
+      344.0
+    ],
+    "rx": 97.0,
+    "ry": 32.0,
+    "postHeight": 30,
+    "v2BBox": [
+      736,
+      296,
+      934,
+      372
+    ],
+    "note": "an animal inside the pen goes between #pen-back and #pen-front"
+  },
+  "hedge": {
+    "bbox": [
+      722,
+      336,
+      1219,
+      468
+    ],
+    "leftEnd": {
+      "x": 728,
+      "y": [
+        420,
+        468
+      ]
+    },
+    "rightEnd": {
+      "x": 1219,
+      "y": [
+        340,
+        372
+      ]
+    },
+    "note": "straight band; about y 58-65% at its left end, rising to the right like v2"
+  },
+  "pond": {
+    "waterBBox": [
+      1004,
+      460,
+      1280,
+      633
+    ],
+    "percent": {
+      "x": [
+        78.4,
+        100
+      ],
+      "y": [
+        63.9,
+        87.9
+      ]
+    },
+    "duckWaterline": "place duck.svg so its waterlineY lands inside this box, e.g. y 520-600"
+  },
+  "suggestedSpots": {
+    "cow": [
+      610,
+      436
+    ],
+    "sheepInPen": [
+      822,
+      354
+    ],
+    "dog": [
+      708,
+      472
+    ],
+    "chicken": [
+      236,
+      448
+    ],
+    "goatByHedge": [
+      790,
+      494
+    ],
+    "duckOnPond": [
+      1150,
+      548
+    ],
+    "horseOnLeftPath": [
+      348,
+      640
+    ],
+    "birdOnPenPost": [
+      904,
+      337
+    ]
+  }
+}

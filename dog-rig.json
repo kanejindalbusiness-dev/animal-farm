@@ -1,0 +1,128 @@
+{
+  "file": "dog.svg",
+  "viewBox": "0 0 470 370",
+  "groundLineY": 338,
+  "facing": "right",
+  "paintOrderBackToFront": [
+    "leg-back-far",
+    "leg-front-far",
+    "tail",
+    "leg-back-near",
+    "leg-front-near",
+    "body",
+    "head",
+    "jaw"
+  ],
+  "rotationSign": "CSS rotate(); positive = clockwise on screen",
+  "bark": {
+    "part": "jaw",
+    "openDeg": 28,
+    "closedDeg": 0,
+    "range": [
+      0,
+      30
+    ],
+    "howTo": "Rotate #jaw (inside #head) to +28 to open the mouth, back to 0 to close. A small head lift (-8) on the open frame sells the bark."
+  },
+  "scaleToCowUnits": 0.706,
+  "heightRelativeToCow": 0.56,
+  "parts": [
+    {
+      "id": "leg-back-far",
+      "pivot": {
+        "x": 196,
+        "y": 236
+      },
+      "description": "Far hind leg (darker); pivot at the hip, top hidden under the body (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "leg-front-far",
+      "pivot": {
+        "x": 282,
+        "y": 238
+      },
+      "description": "Far front leg (darker); pivot at the shoulder (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "tail",
+      "pivot": {
+        "x": 140,
+        "y": 202
+      },
+      "description": "Curly tail with a light tip; pivot at the root (+ swings up/forward, - swings down/back; wag between -30 and +30).",
+      "safeRotationDeg": [
+        -30,
+        30
+      ]
+    },
+    {
+      "id": "leg-back-near",
+      "pivot": {
+        "x": 170,
+        "y": 240
+      },
+      "description": "Near hind leg; pivot at the hip (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "leg-front-near",
+      "pivot": {
+        "x": 306,
+        "y": 242
+      },
+      "description": "Near front leg; pivot at the shoulder (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "body",
+      "pivot": {
+        "x": 236,
+        "y": 226
+      },
+      "description": "Torso with light chest; covers the leg tops. Pivot near the centre for a gentle bob.",
+      "safeRotationDeg": [
+        -4,
+        4
+      ]
+    },
+    {
+      "id": "head",
+      "pivot": {
+        "x": 310,
+        "y": 194
+      },
+      "description": "Head with floppy ears, muzzle, nose and eye; contains 'jaw'. Pivot at the neck (+ nods down, - lifts).",
+      "safeRotationDeg": [
+        -20,
+        20
+      ]
+    },
+    {
+      "id": "jaw",
+      "pivot": {
+        "x": 372,
+        "y": 168
+      },
+      "description": "Lower jaw with tongue and mouth inside; nested in 'head', pivot at the jaw hinge (+ opens the mouth, 0 = closed).",
+      "safeRotationDeg": [
+        0,
+        30
+      ],
+      "parent": "head"
+    }
+  ]
+}

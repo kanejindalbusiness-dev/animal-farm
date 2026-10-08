@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 330" width="360" height="330">
+  <g id="leg-far" data-pivot-x="166" data-pivot-y="236" style="transform-box: view-box; transform-origin: 166px 236px">
+    <path d="M166,236 C166,268.5 166,289 168,298 M168,298 L186,300 M168,298 L182.4,293 M168,298 L159,300" fill="none" stroke="#3a2a24" stroke-width="14.0" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M166,236 C166,268.5 166,289 168,298 M168,298 L186,300 M168,298 L182.4,293 M168,298 L159,300" fill="none" stroke="#d98a2f" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g id="leg-near" data-pivot-x="148" data-pivot-y="238" style="transform-box: view-box; transform-origin: 148px 238px">
+    <path d="M148,238 C148,271.0 148,292 150,301 M150,301 L168,303 M150,301 L164.4,296 M150,301 L141,303" fill="none" stroke="#3a2a24" stroke-width="14.0" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M148,238 C148,271.0 148,292 150,301 M150,301 L168,303 M150,301 L164.4,296 M150,301 L141,303" fill="none" stroke="#f2a03d" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g id="body" data-pivot-x="156" data-pivot-y="236" style="transform-box: view-box; transform-origin: 156px 236px">
+    <g id="tail" data-pivot-x="106" data-pivot-y="186" style="transform-box: view-box; transform-origin: 106px 186px">
+      <defs><clipPath id="chicken-clip-tail"><path d="M112,196 C92,190 72,170 66,142 C64,128 72,122 80,128 C80,112 88,104 96,112 C98,98 108,94 114,104 C122,122 128,150 132,176 Z"/></clipPath></defs>
+      <path d="M112,196 C92,190 72,170 66,142 C64,128 72,122 80,128 C80,112 88,104 96,112 C98,98 108,94 114,104 C122,122 128,150 132,176 Z" fill="#e9a333"/>
+      <g clip-path="url(#chicken-clip-tail)"><path d="M84,132 C92,150 104,170 118,186 M100,114 C106,136 114,160 124,182" fill="none" stroke="#3a2a24" stroke-width="3" opacity="0.35"/><path d="M60,170 C80,190 110,200 140,196 L140,210 L60,210 Z" fill="#5a3a30" opacity="0.15"/></g>
+      <path d="M112,196 C92,190 72,170 66,142 C64,128 72,122 80,128 C80,112 88,104 96,112 C98,98 108,94 114,104 C122,122 128,150 132,176 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    </g>
+    <g id="head" data-pivot-x="200" data-pivot-y="198" style="transform-box: view-box; transform-origin: 200px 198px">
+      <path d="M204,98 C198,86 204,74 214,78 C214,66 226,62 230,74 C236,64 250,68 246,82 C252,84 252,94 244,98 C232,94 216,94 204,98 Z" fill="#e2483d" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <defs><clipPath id="chicken-clip-head"><path d="M178,216 C176,168 184,132 194,110 C204,90 230,84 246,100 C258,114 256,136 246,150 C236,162 230,180 236,216 Z"/></clipPath></defs>
+      <path d="M178,216 C176,168 184,132 194,110 C204,90 230,84 246,100 C258,114 256,136 246,150 C236,162 230,180 236,216 Z" fill="#f7bd48"/>
+      <g clip-path="url(#chicken-clip-head)"><path d="M176,170 C200,180 230,176 260,150 L260,200 L176,200 Z" fill="#5a3a30" opacity="0.15"/><path d="M198,112 C206,98 220,92 232,94" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.4"/></g>
+      <path d="M178,216 C176,168 184,132 194,110 C204,90 230,84 246,100 C258,114 256,136 246,150 C236,162 230,180 236,216 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M238,128 C236,140 238,152 246,154 C254,154 256,142 252,128 Z" fill="#e2483d" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <defs><clipPath id="chicken-clip-beak"><path d="M244,108 C252,108 262,112 270,118 C262,124 252,128 244,128 Z"/></clipPath></defs>
+      <path d="M244,108 C252,108 262,112 270,118 C262,124 252,128 244,128 Z" fill="#f39a2b"/>
+      <g clip-path="url(#chicken-clip-beak)"><path d="M240,119 L274,119 L274,132 L240,132 Z" fill="#5a3a30" opacity="0.2"/></g>
+      <path d="M244,108 C252,108 262,112 270,118 C262,124 252,128 244,128 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M246,118 L264,118" fill="none" stroke="#3a2a24" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <ellipse cx="226" cy="112" rx="8.4" ry="10.5" fill="#2b201d"/>
+      <circle cx="229.2" cy="107.8" r="3.2" fill="#ffffff"/>
+      <circle cx="223.6" cy="116.9" r="1.4" fill="#ffffff"/>
+      <ellipse cx="230" cy="132" rx="8" ry="5" fill="#f39a98" opacity="0.45"/>
+    </g>
+    <defs><clipPath id="chicken-clip-torso"><path d="M100,168 C122,150 172,150 204,160 C232,170 246,196 242,222 C238,248 214,262 182,264 C146,266 112,256 96,236 C82,218 84,184 100,168 Z"/></clipPath></defs>
+    <path d="M100,168 C122,150 172,150 204,160 C232,170 246,196 242,222 C238,248 214,262 182,264 C146,266 112,256 96,236 C82,218 84,184 100,168 Z" fill="#f7bd48"/>
+    <g clip-path="url(#chicken-clip-torso)"><path d="M196,170 C230,180 246,210 238,236 C226,256 206,262 186,262 C206,236 210,200 196,170 Z" fill="#fde3a0"/><path d="M80,236 C130,262 200,266 250,232 L250,290 L80,290 Z" fill="#5a3a30" opacity="0.15"/><path d="M118,166 C140,156 168,156 188,160" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.4"/></g>
+    <path d="M100,168 C122,150 172,150 204,160 C232,170 246,196 242,222 C238,248 214,262 182,264 C146,266 112,256 96,236 C82,218 84,184 100,168 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <defs><clipPath id="chicken-clip-wing"><path d="M118,196 C140,184 182,186 202,204 C212,214 210,230 198,238 C186,244 170,240 160,246 C146,252 132,248 124,240 C112,228 108,206 118,196 Z"/></clipPath></defs>
+    <path d="M118,196 C140,184 182,186 202,204 C212,214 210,230 198,238 C186,244 170,240 160,246 C146,252 132,248 124,240 C112,228 108,206 118,196 Z" fill="#e9a333"/>
+    <g clip-path="url(#chicken-clip-wing)"><path d="M110,234 C140,252 180,250 214,228 L214,260 L110,260 Z" fill="#5a3a30" opacity="0.18"/></g>
+    <path d="M118,196 C140,184 182,186 202,204 C212,214 210,230 198,238 C186,244 170,240 160,246 C146,252 132,248 124,240 C112,228 108,206 118,196 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M140,222 C150,226 160,226 170,222 M150,236 C160,238 170,236 178,232 M134,208 C146,212 160,212 172,208" fill="none" stroke="#3a2a24" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" opacity="0.45"/>
+  </g>
+</svg>

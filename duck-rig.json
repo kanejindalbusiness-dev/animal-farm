@@ -1,0 +1,144 @@
+{
+  "file": "duck.svg",
+  "viewBox": "0 0 340 320",
+  "groundLineY": 292,
+  "facing": "right",
+  "paintOrderBackToFront": [
+    "leg-far",
+    "leg-near",
+    "body",
+    "wing-far",
+    "tail",
+    "head",
+    "wing-near",
+    "swim"
+  ],
+  "rotationSign": "CSS rotate(); positive = clockwise on screen",
+  "swim": {
+    "group": "swim",
+    "hiddenByDefault": true,
+    "waterlineY": 238,
+    "howTo": "Swim: set #swim display to inline (e.g. el.removeAttribute('display') or CSS #swim{display:inline}) and set display:none on #leg-near and #leg-far. Place the duck so y=238 (waterline) sits on the pond surface. Bob with #body +-4."
+  },
+  "fly": {
+    "wingsUp": {
+      "wing-near": 80,
+      "wing-far": 112,
+      "body": -8,
+      "leg-near": 30,
+      "leg-far": 30
+    },
+    "wingsDown": {
+      "wing-near": -35,
+      "wing-far": -20,
+      "body": -8,
+      "leg-near": 30,
+      "leg-far": 30
+    },
+    "howTo": "Flap by alternating #wing-near between +80 (up) and -35 (down) and #wing-far between +112 and -20 (both nested in #body). Tilt #body -8 and tuck the legs back (+30) while flying."
+  },
+  "scaleToCowUnits": 0.601,
+  "heightRelativeToCow": 0.38,
+  "parts": [
+    {
+      "id": "leg-far",
+      "pivot": {
+        "x": 170,
+        "y": 238
+      },
+      "description": "Far leg and webbed foot (darker); pivot at the hip (+ back, - forward). Hide while swimming.",
+      "safeRotationDeg": [
+        -30,
+        30
+      ]
+    },
+    {
+      "id": "leg-near",
+      "pivot": {
+        "x": 152,
+        "y": 240
+      },
+      "description": "Near leg and webbed foot; pivot at the hip (+ back, - forward). Hide while swimming.",
+      "safeRotationDeg": [
+        -30,
+        30
+      ]
+    },
+    {
+      "id": "body",
+      "pivot": {
+        "x": 160,
+        "y": 238
+      },
+      "description": "Torso; pivot at the hips over the legs. Contains both wings, the tail and the head (+ tips forward, - leans back; use -8 when flying).",
+      "safeRotationDeg": [
+        -15,
+        15
+      ]
+    },
+    {
+      "id": "wing-far",
+      "pivot": {
+        "x": 192,
+        "y": 180
+      },
+      "description": "Far wing (darker), behind the body; nested in 'body', pivot at the shoulder (+ raises it, - lowers it).",
+      "safeRotationDeg": [
+        -35,
+        125
+      ],
+      "parent": "body"
+    },
+    {
+      "id": "tail",
+      "pivot": {
+        "x": 100,
+        "y": 196
+      },
+      "description": "Little pointed tail; nested in 'body', pivot at the root (+ tips forward/upright, - tips back/down; a quick -15/+15 is a waggle).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ],
+      "parent": "body"
+    },
+    {
+      "id": "head",
+      "pivot": {
+        "x": 198,
+        "y": 196
+      },
+      "description": "Head with bill, eye and tuft; nested in 'body', neck base hidden behind the body (+ dips forward, - lifts).",
+      "safeRotationDeg": [
+        -20,
+        30
+      ],
+      "parent": "body"
+    },
+    {
+      "id": "wing-near",
+      "pivot": {
+        "x": 186,
+        "y": 186
+      },
+      "description": "Near wing over the body; nested in 'body', pivot at the shoulder (+ raises it, - lowers it).",
+      "safeRotationDeg": [
+        -35,
+        110
+      ],
+      "parent": "body"
+    },
+    {
+      "id": "swim",
+      "pivot": {
+        "x": 165,
+        "y": 238
+      },
+      "description": "Water ripple band at the waterline, in front of the lower body. Hidden by default (display=\"none\"); show it and hide both legs to swim.",
+      "safeRotationDeg": [
+        0,
+        0
+      ]
+    }
+  ]
+}

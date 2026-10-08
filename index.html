@@ -1,0 +1,3489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Animal Farm</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+    background: #a9d9f0;
+  }
+  #stage {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: #a9d9f0;
+  }
+  #ground-fill {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #93c45d;
+    pointer-events: none;
+  }
+  .scene {
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: visible;
+    container-type: size;
+    z-index: 1;
+  }
+  .scene .full {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+  .scene .art svg,
+  #pen-cover svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow: visible;
+  }
+  #pen-cover {
+    position: absolute;
+    inset: 0;
+    z-index: 140;
+    pointer-events: none;
+  }
+  .words {
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    top: 60%;
+    bottom: 1.2%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3.2cqh;
+    text-align: center;
+    font-family: "Noto Sans Display", "Trebuchet MS", "Segoe UI", sans-serif;
+    pointer-events: none;
+  }
+  .words .big {
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: 0.13em 0.48em 0.16em;
+    font-size: 10.6cqh;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: #ffe566;
+    background:
+      radial-gradient(90% 70% at 50% 0%, rgba(255, 255, 255, 0.42), transparent 48%),
+      linear-gradient(180deg, #ff5d96 0%, #e2186a 42%, #c2185b 100%);
+    border: 0.09em solid #fff6dc;
+    border-radius: 0.42em;
+    box-shadow:
+      inset 0 0.08em 0 rgba(255, 255, 255, 0.35),
+      0 0 0 0.07em #ffe14a,
+      0 0 0 0.14em #3ec6ff,
+      0 0.13em 0 #9a3412,
+      0 0.22em 0.12em rgba(48, 22, 6, 0.28);
+    -webkit-text-stroke: 0.07em #6b1236;
+    paint-order: stroke fill;
+    text-shadow: 0.055em 0.07em 0 #4a0c24;
+    transform: rotate(-1.1deg);
+    animation: title-breathe 2.6s ease-in-out infinite;
+  }
+  .words .big::before,
+  .words .big::after {
+    position: absolute;
+    top: -0.55em;
+    font-size: 0.4em;
+    line-height: 1;
+    color: #ffe14a;
+    -webkit-text-stroke: 0;
+    text-shadow:
+      0 0.08em 0 #e07a00,
+      -0.04em 0 0 #fff6dc,
+      0.04em 0 0 #fff6dc;
+    animation: star-twinkle 1.7s ease-in-out infinite;
+  }
+  .words .big::before {
+    content: "★";
+    left: 0.12em;
+    transform: rotate(-18deg);
+  }
+  .words .big::after {
+    content: "★";
+    right: 0.08em;
+    transform: rotate(16deg);
+    animation-delay: 0.45s;
+  }
+  .words .small {
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: 0.28em 0.95em 0.32em;
+    font-size: 4cqh;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.035em;
+    white-space: nowrap;
+    color: #7a1240;
+    background: linear-gradient(180deg, #fffef6 0%, #ffe56a 62%, #ffc107 100%);
+    border: 0.11em solid #fff;
+    border-radius: 999px;
+    box-shadow:
+      0 0.14em 0 #e39b00,
+      0 0.24em 0.16em rgba(48, 22, 6, 0.24);
+    animation: enter-bob 1.3s ease-in-out infinite;
+  }
+  .load-note {
+    position: fixed;
+    left: 50%;
+    top: 62%;
+    z-index: 30;
+    transform: translateX(-50%);
+    width: min(32rem, 86vw);
+    margin: 0;
+    padding: 0.75rem 1rem;
+    color: #3d2914;
+    background: #fffef8;
+    font-family: "Noto Sans Display", "Trebuchet MS", "Segoe UI", sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: center;
+    border-radius: 0.7rem;
+  }
+  .load-note[hidden] {
+    display: none;
+  }
+  .words .small::before,
+  .words .small::after {
+    position: absolute;
+    top: 50%;
+    font-size: 1.2em;
+    line-height: 1;
+    transform: translateY(-58%);
+    text-shadow: 0 0.08em 0 #fff;
+  }
+  .words .small::before {
+    content: "✦";
+    left: -1.25em;
+    color: #ff3d8a;
+  }
+  .words .small::after {
+    content: "✦";
+    right: -1.25em;
+    color: #1aa8e8;
+  }
+  @keyframes title-breathe {
+    0%, 100% { transform: rotate(-1.1deg) scale(1); }
+    50% { transform: rotate(-1.1deg) scale(1.035); }
+  }
+  @keyframes enter-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-0.16em); }
+  }
+  @keyframes star-twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .words .big,
+    .words .small,
+    .words .big::before,
+    .words .big::after {
+      animation: none;
+    }
+  }
+  .walker {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+  .clip {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+  }
+  .clip.back {
+    transform: scaleX(-1);
+  }
+  .walker.rigged .clip {
+    position: relative;
+    background: none;
+    overflow: visible;
+  }
+  .rig-svg {
+    position: absolute;
+    display: block;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .bird {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    background: none;
+    pointer-events: none;
+  }
+  .chicken { height: 6.2%; aspect-ratio: 306 / 321; }
+  .horse { height: 9.2%; aspect-ratio: 344 / 314; }
+  .cow { height: 7.2%; aspect-ratio: 372 / 316; }
+  .dog { height: 6.2%; aspect-ratio: 337 / 306; }
+  .sheep { height: 5.6%; aspect-ratio: 340 / 302; }
+  .goat { height: 6.2%; aspect-ratio: 330 / 320; }
+  .duck { height: 6.2%; aspect-ratio: 302 / 313; }
+  #marker {
+    position: absolute;
+    width: 18px;
+    height: 22px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,88 10,12 90,12' fill='%23e10600' stroke='%23ffffff' stroke-width='10' stroke-linejoin='miter' stroke-miterlimit='3'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+    filter: drop-shadow(0 5px 4px rgba(16, 18, 24, 0.55));
+    z-index: 200;
+    pointer-events: none;
+  }
+  .card {
+    position: fixed;
+    z-index: 50;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(440px, 92vw);
+    background-color: #fff8e7;
+    background-image:
+      radial-gradient(circle at 20px 18px, #ffb0dc 0 6px, transparent 7px),
+      radial-gradient(circle at calc(100% - 20px) 18px, #8fd9ff 0 6px, transparent 7px),
+      radial-gradient(circle at 20px calc(100% - 16px), #9eeb92 0 6px, transparent 7px),
+      radial-gradient(circle at calc(100% - 20px) calc(100% - 16px), #ffd56a 0 6px, transparent 7px),
+      linear-gradient(180deg, #fff3ae 0%, #fffdf8 46%, #ffe3f3 100%);
+    border: 7px solid #ff7a18;
+    border-radius: 32px;
+    box-shadow:
+      0 0 0 5px #ffe14a,
+      0 0 0 10px #3ec6ff,
+      0 16px 28px rgba(40, 24, 8, 0.28);
+    padding: 12px 16px 16px;
+    text-align: center;
+    box-sizing: border-box;
+    font-family: "Comic Sans MS", "Chalkboard SE", "Segoe Print", Cantarell, "Noto Sans", "Trebuchet MS", sans-serif;
+  }
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 4px 8px;
+    pointer-events: none;
+  }
+  .card .spark {
+    color: #ff3d8a;
+    font-size: 1.45rem;
+    line-height: 1;
+    text-shadow: 0 2px 0 #fff;
+  }
+  .card .spark-mid {
+    color: #ffb000;
+    font-size: 1.15rem;
+  }
+  .card .sticker {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff4b0, #ffc107 55%, #ff9800);
+    color: #e65100;
+    font-size: 1.15rem;
+    line-height: 1;
+    border: 3px solid #fff;
+    box-shadow: 0 3px 0 #e08800;
+    transform: rotate(12deg);
+  }
+  .card .portrait {
+    margin: 0 auto 12px;
+    padding: 10px 12px 6px;
+    background: linear-gradient(180deg, #e8f8ff 0%, #b7ebff 100%);
+    border: 4px solid #fff;
+    border-radius: 22px;
+    box-shadow: 0 5px 0 #49b8ee;
+  }
+  .card img {
+    height: min(210px, 28vh);
+    width: auto;
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+  }
+  .card p {
+    margin: 0;
+    color: #3d2914;
+    font-family: "Comic Sans MS", "Chalkboard SE", "Segoe Print", Cantarell, "Noto Sans", "Trebuchet MS", sans-serif;
+  }
+  .card .name {
+    position: relative;
+    display: block;
+    margin: 0 8px;
+    padding: 7px 14px 8px;
+    background: #c2185b;
+    color: #fffef8;
+    font-size: clamp(1.4rem, 4.4vw, 2rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    border: 3px solid #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 0 #880e4f;
+    text-shadow: 0 2px 0 rgba(90, 8, 40, 0.35);
+  }
+  .card .name::before,
+  .card .name::after {
+    content: "";
+    position: absolute;
+    bottom: -7px;
+    width: 14px;
+    height: 10px;
+    background: #880e4f;
+  }
+  .card .name::before {
+    left: 22px;
+    clip-path: polygon(0 0, 100% 0, 0 100%);
+  }
+  .card .name::after {
+    right: 22px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+  }
+  .card .line {
+    margin: 14px 4px 0;
+    padding: 8px 12px 9px;
+    background: #fffef8;
+    color: #3d2914;
+    font-size: clamp(1.08rem, 3.3vw, 1.38rem);
+    font-weight: 700;
+    line-height: 1.3;
+    border: 3px dashed #ff8a00;
+    border-radius: 16px;
+    box-shadow: 0 3px 0 #ffe08a;
+  }
+</style>
+</head>
+<body>
+  <div id="stage">
+  <div id="ground-fill"></div>
+  <div class="scene" id="title">
+    <div class="full art" id="title-art"></div>
+    <div class="words">
+      <p class="big">Animal Farm</p>
+      <p class="small">Press Enter</p>
+    </div>
+  </div>
+  <p class="load-note" id="load-note" hidden>The pictures could not load. Please open this page through the preview or a local web server.</p>
+  <div class="scene" id="farm" hidden>
+    <div class="full art" id="farm-art"></div>
+    <div class="walker cow" data-i="0">
+      <div class="clip"></div>
+    </div>
+    <div class="walker sheep" data-i="1">
+      <div class="clip"></div>
+    </div>
+    <div class="walker chicken" data-i="2">
+      <div class="clip"></div>
+    </div>
+    <div class="walker horse" data-i="3">
+      <div class="clip"></div>
+    </div>
+    <div class="walker duck" data-i="4">
+      <div class="clip"></div>
+    </div>
+    <div class="walker dog" data-i="5">
+      <div class="clip"></div>
+    </div>
+    <div class="walker goat" data-i="6">
+      <div class="clip"></div>
+    </div>
+    <div class="full" id="pen-cover"></div>
+    <div id="marker"></div>
+  </div>
+  </div>
+  <div class="card" id="card" hidden>
+    <div class="card-top" aria-hidden="true">
+      <span class="spark">★</span>
+      <span class="spark spark-mid">✦</span>
+      <span class="sticker">★</span>
+    </div>
+    <div class="portrait">
+      <img id="card-still" alt="">
+    </div>
+    <p class="name" id="card-name"></p>
+    <p class="line" id="card-line"></p>
+  </div>
+  <audio id="title-music" src="title.mp3" loop preload="auto"></audio>
+  <audio id="music" src="music.mp3" loop preload="none"></audio>
+  <audio id="amb-wind" src="wind.mp3" loop preload="none"></audio>
+  <audio id="amb-leaves" src="leaves.mp3" loop preload="none"></audio>
+  <audio id="amb-pond" src="pond.mp3" loop preload="none"></audio>
+  <audio class="voice" id="clip-cow" src="cow.mp3" preload="auto"></audio>
+  <audio class="voice" id="clip-sheep" src="sheep.mp3" preload="auto"></audio>
+  <audio class="voice" id="clip-chicken" src="chicken.mp3" preload="auto"></audio>
+  <audio class="voice" id="clip-horse" src="horse.mp3" preload="auto"></audio>
+  <audio class="voice" id="clip-duck" src="duck.mp3" preload="auto"></audio>
+  <audio class="voice" id="clip-dog" src="dog.mp3" preload="auto"></audio>
+  <audio class="voice" id="clip-goat" src="goat.mp3" preload="auto"></audio>
+  <audio id="takeoff" src="birds-takeoff.mp3" preload="auto"></audio>
+  <script>
+    var birdChaseEnabled = true;
+
+    var herd = [
+      { sound: "cow.mp3", still: "cow.svg", name: "Daisy the cow.", line: "She likes fresh green grass.", route: [[45.5, 58], [49.5, 56.8], [52.5, 59.5], [47, 61]], lap: 5200 },
+      { sound: "sheep.mp3", still: "sheep.svg", name: "Fluff the sheep.", line: "She likes soft warm wool.", route: [[63.2, 47.6], [66, 47.0], [67.6, 48.4], [64.2, 49.0]], lap: 5000 },
+      { sound: "chicken.mp3", still: "chicken.svg", name: "Dot the chicken.", line: "She likes laying an egg.", route: [[9, 68.3], [12.5, 69.3], [13.5, 71.8], [10.5, 70.3]], lap: 4200 },
+      { sound: "horse.mp3", still: "horse.svg", name: "Ned the horse.", line: "He likes a fast gallop.", route: [[30, 76], [28, 82], [25, 88], [23.5, 91]], lap: 9000 },
+      { sound: "duck.mp3", still: "duck.svg", name: "Quacky the duck.", line: "He likes a splash in the pond.", route: [[70, 80], [74.2, 84], [76.4, 87], [85, 74], [91, 78], [95.5, 73]], lap: 7000 },
+      { sound: "dog.mp3", still: "dog.svg", name: "Buddy the dog.", line: "He likes a game of fetch.", route: [[46, 74], [51, 72], [55, 76.5], [48.5, 78.5]], lap: 4800 },
+      { sound: "goat.mp3", still: "goat.svg", name: "Nanny the goat.", line: "She likes to nibble the hedge.", route: [[62.5, 70], [66.5, 68.5], [70, 71.5], [64.5, 72.5]], lap: 5600 }
+    ];
+    var tall = { cow: 7.2, sheep: 5.6, chicken: 6.2, horse: 9.2, duck: 6.2, dog: 6.2, goat: 6.2 };
+    var slackOf = { cow: 1.05, sheep: 0.2, chicken: 0.9, horse: 1.05, duck: 0.55, dog: 1.05, goat: 0.7 };
+    var pace = {
+      cow: [0.75, 2.15],
+      sheep: [0.55, 1.65],
+      chicken: [0.65, 2.05],
+      horse: [0.95, 2.5],
+      duck: [0.7, 1.9],
+      dog: [0.85, 2.6],
+      goat: [0.75, 2.1]
+    };
+    var walkers = document.querySelectorAll(".walker");
+    var index = 0;
+    var card = document.getElementById("card");
+    var cardStill = document.getElementById("card-still");
+    var cardName = document.getElementById("card-name");
+    var cardLine = document.getElementById("card-line");
+    var music = document.getElementById("music");
+    var titleMusic = document.getElementById("title-music");
+    var title = document.getElementById("title");
+    var farm = document.getElementById("farm");
+    var marker = document.getElementById("marker");
+    var musicOn = false;
+    var farmOn = false;
+    var cardLock = 0;
+    var walking = false;
+    var spaceHeld = false;
+    var lastTick = 0;
+    var keptImages = [];
+    music.volume = 0.18;
+    music.loop = true;
+    titleMusic.volume = 0.35;
+    titleMusic.loop = true;
+
+    var ambient = [];
+    ["wind.mp3", "leaves.mp3", "pond.mp3"].forEach(function (file) {
+      var el = document.getElementById("amb-" + file.replace(".mp3", ""));
+      if (!el) return;
+      el.volume = 0.06;
+      el.loop = true;
+      ambient.push(el);
+    });
+
+    function warm(src) {
+      var img = new Image();
+      img.src = src;
+      if (img.decode) img.decode().catch(function () {});
+      keptImages.push(img);
+    }
+
+    herd.forEach(function (animal) { warm(animal.still); });
+
+    function clamp01(v) {
+      if (v < 0) return 0;
+      if (v > 1) return 1;
+      return v;
+    }
+
+    function distPoint(x, y, gx, gy) {
+      var dx = (x - gx) * (16 / 9);
+      var dy = y - gy;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    function segLen(pts, seg) {
+      var ax = pts[seg][0], ay = pts[seg][1];
+      var bx = pts[seg + 1][0], by = pts[seg + 1][1];
+      var dx = (bx - ax) * (16 / 9);
+      var dy = by - ay;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    function routePoint(pts, seg, u, side) {
+      var ax = pts[seg][0], ay = pts[seg][1];
+      var bx = pts[seg + 1][0], by = pts[seg + 1][1];
+      var x = ax + (bx - ax) * u;
+      var y = ay + (by - ay) * u;
+      var dx = (bx - ax) * (16 / 9);
+      var dy = by - ay;
+      var len = Math.sqrt(dx * dx + dy * dy) || 1;
+      var px = -dy / len;
+      var py = dx / len;
+      return [x + px * side * (9 / 16), y + py * side];
+    }
+
+    function project(pts, x, y) {
+      var bestD = Infinity;
+      var best = { seg: 0, u: 0, side: 0 };
+      for (var i = 0; i < pts.length - 1; i++) {
+        var ax = pts[i][0], ay = pts[i][1], bx = pts[i + 1][0], by = pts[i + 1][1];
+        var abx = (bx - ax) * (16 / 9), aby = by - ay;
+        var apx = (x - ax) * (16 / 9), apy = y - ay;
+        var ab2 = abx * abx + aby * aby;
+        var t = ab2 ? (apx * abx + apy * aby) / ab2 : 0;
+        if (t < 0) t = 0;
+        if (t > 1) t = 1;
+        var cx = ax + (bx - ax) * t;
+        var cy = ay + (by - ay) * t;
+        var dx = (x - cx) * (16 / 9);
+        var dy = y - cy;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d < bestD) {
+          bestD = d;
+          var len = Math.sqrt(ab2) || 1;
+          var px = -aby / len;
+          var py = abx / len;
+          best = { seg: i, u: t, side: dx * px + dy * py };
+        }
+      }
+      return best;
+    }
+
+    function distToRoute(pts, x, y) {
+      var best = Infinity;
+      for (var i = 0; i < pts.length - 1; i++) {
+        var ax = pts[i][0], ay = pts[i][1], bx = pts[i + 1][0], by = pts[i + 1][1];
+        var abx = (bx - ax) * (16 / 9), aby = by - ay;
+        var apx = (x - ax) * (16 / 9), apy = y - ay;
+        var ab2 = abx * abx + aby * aby;
+        var t = ab2 ? (apx * abx + apy * aby) / ab2 : 0;
+        if (t < 0) t = 0;
+        if (t > 1) t = 1;
+        var cx = ax + (bx - ax) * t;
+        var cy = ay + (by - ay) * t;
+        var dx = (x - cx) * (16 / 9);
+        var dy = y - cy;
+        var d = Math.sqrt(dx * dx + dy * dy);
+        if (d < best) best = d;
+      }
+      return best;
+    }
+
+    function bodyRect(animal, x, y) {
+      var bob = animal.bob || 0;
+      return {
+        l: x - animal.w / 2,
+        r: x + animal.w / 2,
+        t: y + bob - animal.h,
+        b: y + bob
+      };
+    }
+
+    function rectsHit(a, b, pad) {
+      return a.l < b.r + pad && a.r + pad > b.l && a.t < b.b + pad && a.b + pad > b.t;
+    }
+
+    function feetInArea(animal, x, y) {
+      var pts = animal.zone || animal.route;
+      return distToRoute(pts, x, y) <= animal.slack + 0.02;
+    }
+
+    function bodyInScene(animal, x, y) {
+      var r = bodyRect(animal, x, y);
+      return r.l >= -0.02 && r.r <= 100.02 && r.t >= -0.02 && r.b <= 100.02;
+    }
+
+    function hitsOther(animal, x, y) {
+      var rect = bodyRect(animal, x, y);
+      for (var i = 0; i < herd.length; i++) {
+        var other = herd[i];
+        if (other === animal) continue;
+        if (rectsHit(rect, bodyRect(other, other.x, other.y), 0.2)) return true;
+      }
+      return false;
+    }
+
+    function spriteBlocked(animal, x, y) {
+      if (!feetInArea(animal, x, y)) return true;
+      if (!bodyInScene(animal, x, y)) return true;
+      if (hitsOther(animal, x, y)) return true;
+      return false;
+    }
+
+    function topPoint(route) {
+      var best = route[0];
+      for (var i = 1; i < route.length; i++) {
+        if (route[i][1] < best[1]) best = route[i];
+      }
+      return best;
+    }
+
+    function farthest(animal) {
+      var best = animal.route[0];
+      var bestD = -1;
+      for (var i = 0; i < animal.route.length; i++) {
+        var d = distPoint(animal.x, animal.y, animal.route[i][0], animal.route[i][1]);
+        if (d > bestD) {
+          bestD = d;
+          best = animal.route[i];
+        }
+      }
+      return best;
+    }
+
+    herd.forEach(function (animal, i) {
+      animal.kind = animal.sound.replace(".mp3", "");
+      animal.el = walkers[i];
+      animal.clip = walkers[i].querySelector(".clip");
+      animal.h = tall[animal.kind];
+      animal.w = animal.h * (animal.kind === "cow" ? (372 / 316) : 1.05) * (9 / 16);
+      animal.slack = slackOf[animal.kind];
+      animal.baseMin = pace[animal.kind][0];
+      animal.baseMax = pace[animal.kind][1];
+      animal.speedMin = animal.baseMin;
+      animal.speedMax = animal.baseMax;
+      animal.speed = animal.speedMin + Math.random() * (animal.speedMax - animal.speedMin);
+      animal.speedTimer = 0.4 + Math.random() * 1.6;
+      animal.pauseLeft = Math.random() < 0.5 ? 0.25 + Math.random() * 1.1 : 0;
+      animal.seg = 0;
+      animal.u = 0;
+      animal.dir = 1;
+      animal.side = 0;
+      animal.sideTarget = (Math.random() * 2 - 1) * animal.slack * 0.25;
+      animal.x = animal.route[0][0];
+      animal.y = animal.route[0][1];
+      animal.phase = "wander";
+      animal.phaseT = 0;
+      animal.phaseLen = 3 + Math.random() * 2;
+      animal.action = "walk";
+      animal.frameIndex = 0;
+      animal.frameClock = Math.random() * 0.16;
+      animal.facing = animal.route[1][0] - animal.route[0][0] < -0.05 ? -1 : 1;
+      animal.bob = 0;
+      animal.stuck = 0;
+      animal.flow = 0;
+      animal.zone = animal.route;
+      if (animal.kind === "duck") {
+        animal.bank = animal.route.slice(0, 3);
+        animal.pond = animal.route.slice(3);
+        animal.zone = animal.bank;
+        animal.phase = "walk";
+        animal.phaseLen = 3.3 + Math.random() * 1.5;
+      }
+      if (animal.kind === "goat") {
+        animal.hedge = topPoint(animal.route);
+        animal.hedgeSpot = [59.53, 65.28];
+        animal.phase = "approach";
+        animal.phaseLen = 3.5;
+        animal.eatAt = 3.5;
+        animal.clock = 0;
+        animal.facing = -1;
+        animal.faceLock = true;
+      }
+      if (animal.kind === "horse") animal.phaseLen = 1.3;
+      if (animal.kind === "chicken") animal.phaseLen = 2.2;
+      if (animal.kind === "dog" && birdChaseEnabled) buildSittingBirds(animal);
+      animal.useRig = true;
+    });
+
+    function homeCentreX(animal) {
+      var pts = animal.route;
+      var lo = pts[0][0];
+      var hi = pts[0][0];
+      for (var i = 1; i < pts.length; i++) {
+        if (pts[i][0] < lo) lo = pts[i][0];
+        if (pts[i][0] > hi) hi = pts[i][0];
+      }
+      return (lo + hi) * 0.5;
+    }
+
+    var leftToRight = [];
+    for (var orderI = 0; orderI < herd.length; orderI++) leftToRight.push(orderI);
+    leftToRight.sort(function (a, b) {
+      var d = homeCentreX(herd[a]) - homeCentreX(herd[b]);
+      if (d < 0) return -1;
+      if (d > 0) return 1;
+      return a - b;
+    });
+
+    function useZone(animal, pts) {
+      if (animal.zone === pts) return;
+      animal.zone = pts;
+      var proj = project(pts, animal.x, animal.y);
+      animal.seg = proj.seg;
+      animal.u = proj.u;
+      animal.side = proj.side;
+      if (animal.side > animal.slack) animal.side = animal.slack;
+      if (animal.side < -animal.slack) animal.side = -animal.slack;
+      animal.sideTarget = animal.side;
+    }
+
+    function remember(animal) {
+      animal.ox = animal.x;
+      animal.oy = animal.y;
+      animal.oseg = animal.seg;
+      animal.ou = animal.u;
+      animal.oside = animal.side;
+      animal.osideTarget = animal.sideTarget;
+      animal.odir = animal.dir;
+      animal.ozone = animal.zone;
+    }
+
+    function revert(animal) {
+      animal.x = animal.ox;
+      animal.y = animal.oy;
+      animal.seg = animal.oseg;
+      animal.u = animal.ou;
+      animal.side = animal.oside;
+      animal.sideTarget = animal.osideTarget;
+      animal.dir = animal.odir;
+      animal.zone = animal.ozone;
+      animal.moving = false;
+      animal.vx = 0;
+      animal.vy = 0;
+      if (animal.pauseLeft < 0.18) animal.pauseLeft = 0.18;
+    }
+
+    function setAction(animal, name) {
+      if (animal.action === name) return;
+      animal.action = name;
+      animal.frameIndex = 0;
+      animal.frameClock = 0;
+    }
+
+    function measure(animal, sw, sh) {
+      var el = animal.el;
+      var w = el.offsetWidth / sw * 100;
+      var h = el.offsetHeight / sh * 100;
+      if (w > 0.2 && h > 0.2) {
+        animal.w = w;
+        animal.h = h;
+      }
+    }
+
+    function wander(animal, dt) {
+      var pts = animal.zone || animal.route;
+      var segs = pts.length - 1;
+      if (segs < 1) return;
+      if (animal.seg > segs - 1) animal.seg = segs - 1;
+      if (animal.seg < 0) animal.seg = 0;
+      if (animal.pauseLeft > 0) {
+        animal.pauseLeft -= dt;
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        return;
+      }
+      animal.speedTimer -= dt;
+      if (animal.speedTimer <= 0) {
+        animal.speed = animal.speedMin + Math.random() * (animal.speedMax - animal.speedMin);
+        animal.speedTimer = 0.75 + Math.random() * 1.9;
+        animal.sideTarget = (Math.random() * 2 - 1) * animal.slack * 0.7;
+        if (Math.random() < 0.36) animal.pauseLeft = 0.4 + Math.random() * 1.45;
+        if (Math.random() < 0.3) animal.dir = -animal.dir;
+        if (animal.pauseLeft > 0) {
+          animal.moving = false;
+          animal.vx = 0;
+          animal.vy = 0;
+          return;
+        }
+      }
+      animal.side += (animal.sideTarget - animal.side) * Math.min(1, dt * 1.7);
+      if (animal.side > animal.slack) animal.side = animal.slack;
+      if (animal.side < -animal.slack) animal.side = -animal.slack;
+      if (animal.speed < animal.speedMin || animal.speed > animal.speedMax) {
+        animal.speed = (animal.speedMin + animal.speedMax) * 0.5;
+      }
+      var len = segLen(pts, animal.seg) || 0.001;
+      var du = (animal.speed * dt) / len;
+      var seg = animal.seg;
+      var u = animal.u + animal.dir * du;
+      var dir = animal.dir;
+      var turned = false;
+      if (u >= 1) {
+        if (seg < segs - 1) {
+          seg += 1;
+          u = clamp01(u - 1);
+        } else {
+          dir = -1;
+          u = 1;
+        }
+        turned = true;
+      } else if (u <= 0) {
+        if (seg > 0) {
+          seg -= 1;
+          u = clamp01(u + 1);
+        } else {
+          dir = 1;
+          u = 0;
+        }
+        turned = true;
+      }
+      if (turned) {
+        animal.sideTarget = (Math.random() * 2 - 1) * animal.slack * 0.7;
+        if (Math.random() < 0.45) animal.pauseLeft = 0.28 + Math.random() * 1.15;
+        animal.speed = animal.speedMin + Math.random() * (animal.speedMax - animal.speedMin);
+      }
+      var pos = routePoint(pts, seg, clamp01(u), animal.side);
+      if (spriteBlocked(animal, pos[0], pos[1])) {
+        animal.dir = -dir;
+        animal.sideTarget = -animal.side * 0.35;
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        if (animal.pauseLeft < 0.2) animal.pauseLeft = 0.2 + Math.random() * 0.35;
+        return;
+      }
+      var ox = animal.x;
+      var oy = animal.y;
+      animal.x = pos[0];
+      animal.y = pos[1];
+      animal.seg = seg;
+      animal.u = clamp01(u);
+      animal.dir = dir;
+      var fdx = (animal.x - ox) * (16 / 9);
+      var fdy = animal.y - oy;
+      var fm = Math.sqrt(fdx * fdx + fdy * fdy);
+      if (fm < 0.0004) {
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+      } else {
+        animal.moving = true;
+        animal.vx = fdx / fm;
+        animal.vy = fdy / fm;
+      }
+    }
+
+    function seek(animal, goal, dt, speed) {
+      var pts = animal.zone || animal.route;
+      var segs = pts.length - 1;
+      if (animal.seg < 0) animal.seg = 0;
+      if (animal.seg > segs - 1) animal.seg = Math.max(0, segs - 1);
+      var curD = distPoint(animal.x, animal.y, goal[0], goal[1]);
+      if (curD < 0.32) {
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        animal.stuck = 0;
+        return true;
+      }
+      animal.side += (0 - animal.side) * Math.min(1, dt * 3.2);
+      var len = segLen(pts, animal.seg) || 0.001;
+      var du = (speed * dt) / len;
+      var prefer = animal.dir || 1;
+      var dirs = [prefer, -prefer];
+      var best = null;
+      var bestScore = Infinity;
+      for (var k = 0; k < 2; k++) {
+        var dir = dirs[k];
+        var seg = animal.seg;
+        var u = animal.u + dir * du;
+        if (u > 1) {
+          if (seg < segs - 1) {
+            seg += 1;
+            u -= 1;
+            if (u > 1) u = 1;
+          } else u = 1;
+        } else if (u < 0) {
+          if (seg > 0) {
+            seg -= 1;
+            u += 1;
+            if (u < 0) u = 0;
+          } else u = 0;
+        }
+        var pos = routePoint(pts, seg, clamp01(u), animal.side);
+        var d = distPoint(pos[0], pos[1], goal[0], goal[1]);
+        var score = d + (k === 1 ? 0.12 : 0);
+        if (score < bestScore) {
+          bestScore = score;
+          best = { seg: seg, u: clamp01(u), x: pos[0], y: pos[1], dir: dir, d: d };
+        }
+      }
+      if (!best || spriteBlocked(animal, best.x, best.y)) {
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        animal.stuck = (animal.stuck || 0) + dt;
+        return false;
+      }
+      if (best.d > curD + 0.04 && Math.abs(animal.side) < 0.08) {
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        return curD < 1.15;
+      }
+      animal.stuck = 0;
+      var ox = animal.x;
+      var oy = animal.y;
+      animal.x = best.x;
+      animal.y = best.y;
+      animal.seg = best.seg;
+      animal.u = best.u;
+      animal.dir = best.dir;
+      var fdx = (animal.x - ox) * (16 / 9);
+      var fdy = animal.y - oy;
+      var fm = Math.sqrt(fdx * fdx + fdy * fdy);
+      animal.moving = fm > 0.0008;
+      animal.vx = fm ? fdx / fm : 0;
+      animal.vy = fm ? fdy / fm : 0;
+      return false;
+    }
+
+    function mindWanderOnly(animal, dt) {
+      setAction(animal, "walk");
+      wander(animal, dt);
+    }
+
+    function mindChicken(animal, dt) {
+      if (animal.phase === "peck") {
+        animal.phaseT += dt;
+        setAction(animal, "peck");
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        animal.pauseLeft = 0;
+        if (animal.phaseT >= animal.phaseLen) {
+          animal.phase = "wander";
+          animal.phaseT = 0;
+          animal.phaseLen = 3.5;
+          animal.bob = 0;
+          setAction(animal, "walk");
+        }
+        return;
+      }
+      animal.phaseT += dt;
+      setAction(animal, "walk");
+      wander(animal, dt);
+      if (animal.phaseT >= animal.phaseLen) {
+        animal.phase = "peck";
+        animal.phaseT = 0;
+        animal.peckCount = 3;
+        animal.phaseLen = 3 * 6 * 190 / 1000;
+        if (animal.rig && animal.rig.config) animal.rig.config.peckN = 3;
+        if (animal.rig && animal.rig.cycles.peck) animal.rig.cycles.peck.duration = animal.phaseLen;
+        animal.pauseLeft = 0;
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        setAction(animal, "peck");
+      }
+    }
+
+    function mindHorse(animal, dt) {
+      if (animal.phase === "rear") {
+        animal.phaseT += dt;
+        setAction(animal, "rear");
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        animal.pauseLeft = 0;
+        if (animal.phaseT >= animal.phaseLen) {
+          animal.phase = "gallop";
+          animal.phaseT = 0;
+          animal.stuck = 0;
+          animal.pauseLeft = 0;
+          var route = animal.route;
+          var last = route[route.length - 1];
+          var d0 = distPoint(animal.x, animal.y, route[0][0], route[0][1]);
+          var d1 = distPoint(animal.x, animal.y, last[0], last[1]);
+          animal.goal = d0 < d1 ? last : route[0];
+          useZone(animal, route);
+          setAction(animal, "gallop");
+        }
+        return;
+      }
+      if (animal.phase === "gallop") {
+        animal.phaseT += dt;
+        setAction(animal, "gallop");
+        animal.pauseLeft = 0;
+        var speed = 10.4;
+        var done = seek(animal, animal.goal, dt, speed);
+        if (done && animal.phaseT < 1.85) {
+          var routeNow = animal.route;
+          var first = routeNow[0];
+          var far = routeNow[routeNow.length - 1];
+          var curGoal = animal.goal || first;
+          animal.goal = (Math.abs(curGoal[0] - first[0]) < 0.05 && Math.abs(curGoal[1] - first[1]) < 0.05) ? far : first;
+          animal.stuck = 0;
+          done = false;
+        }
+        if ((done && animal.phaseT >= 1.55) || animal.phaseT > 3.3 || animal.stuck > 1.6) {
+          var spent = (animal.rearDur || 0) + animal.phaseT;
+          var cycle = 17;
+          animal.phase = "wander";
+          animal.phaseT = 0;
+          animal.phaseLen = Math.max(3, cycle - spent);
+          animal.stuck = 0;
+          animal.speedMin = animal.baseMin;
+          animal.speedMax = animal.baseMax;
+          setAction(animal, "walk");
+        }
+        return;
+      }
+      animal.phaseT += dt;
+      setAction(animal, "walk");
+      wander(animal, dt);
+      if (animal.phaseT >= animal.phaseLen) {
+        animal.phase = "rear";
+        animal.phaseT = 0;
+        animal.phaseLen = 1.75;
+        animal.rearDur = animal.phaseLen;
+        animal.pauseLeft = 0;
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        setAction(animal, "rear");
+      }
+    }
+
+    function mindDuck(animal, dt) {
+      if (animal.phase === "flyIn" || animal.phase === "flyOut") {
+        animal.phaseT += dt;
+        setAction(animal, "fly");
+        animal.pauseLeft = 0;
+        useZone(animal, animal.route);
+        var goal = animal.phase === "flyIn" ? animal.route[animal.route.length - 1] : animal.route[0];
+        var speed = 4.7 + Math.sin(animal.phaseT * 5) * 0.5;
+        var done = seek(animal, goal, dt, speed);
+        var nearGoal = distPoint(animal.x, animal.y, goal[0], goal[1]) < 1.2;
+        if (done || (nearGoal && (animal.phaseT > 6.5 || animal.stuck > 1.5))) {
+          animal.stuck = 0;
+          animal.phaseT = 0;
+          if (animal.phase === "flyIn") {
+            animal.phase = "swim";
+            animal.phaseLen = 3.2 + Math.random() * 1.5;
+            animal.speed = 0.5;
+            useZone(animal, animal.pond);
+            setAction(animal, "swim");
+          } else {
+            animal.phase = "walk";
+            animal.phaseLen = 3.3 + Math.random() * 1.7;
+            animal.speedMin = animal.baseMin;
+            animal.speedMax = animal.baseMax;
+            useZone(animal, animal.bank);
+            setAction(animal, "walk");
+          }
+        }
+        return;
+      }
+      if (animal.phase === "swim") {
+        animal.phaseT += dt;
+        setAction(animal, "swim");
+        useZone(animal, animal.pond);
+        animal.speedMin = 0.3;
+        animal.speedMax = 0.8;
+        if (animal.speed > animal.speedMax) animal.speed = animal.speedMax;
+        wander(animal, dt);
+        if (animal.phaseT >= animal.phaseLen) {
+          animal.phase = "flyOut";
+          animal.phaseT = 0;
+          animal.pauseLeft = 0;
+          animal.stuck = 0;
+          useZone(animal, animal.route);
+          setAction(animal, "fly");
+        }
+        return;
+      }
+      animal.phaseT += dt;
+      setAction(animal, "walk");
+      useZone(animal, animal.bank);
+      animal.speedMin = animal.baseMin;
+      animal.speedMax = animal.baseMax;
+      wander(animal, dt);
+      if (animal.phaseT >= animal.phaseLen) {
+        animal.phase = "flyIn";
+        animal.phaseT = 0;
+        animal.pauseLeft = 0;
+        animal.stuck = 0;
+        useZone(animal, animal.route);
+        setAction(animal, "fly");
+      }
+    }
+
+    function chaseBlocked() {
+      if (!farmOn || !card.hidden) return true;
+      var nodes = document.querySelectorAll("audio.voice");
+      for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].id === "clip-dog") continue;
+        if (!nodes[i].paused && !nodes[i].ended) return true;
+      }
+      return false;
+    }
+
+    function playBark() {
+      if (chaseBlocked()) return;
+      var clip = document.getElementById("clip-dog");
+      if (!clip) return;
+      clip.volume = 1;
+      clip.loop = false;
+      try { clip.currentTime = 0; } catch (e) {}
+      var started = clip.play();
+      if (started && started.catch) started.catch(function () {});
+    }
+
+    function playTakeoff() {
+      if (chaseBlocked()) return;
+      var el = document.getElementById("takeoff");
+      if (!el) return;
+      el.volume = 1;
+      el.loop = false;
+      try { el.currentTime = 0; } catch (e) {}
+      var started = el.play();
+      if (started && started.catch) started.catch(function () {});
+    }
+
+    function clearBirds(animal) {
+      var list = animal.birdList || [];
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].el && list[i].el.parentNode) list[i].el.parentNode.removeChild(list[i].el);
+      }
+      animal.birdList = null;
+    }
+
+    function buildSittingBirds(animal) {
+      clearBirds(animal);
+      var specs = [
+        { x: 36.5, y: 90.5, outx: -8, outy: -8 },
+        { x: 39.2, y: 92.2, outx: 2, outy: -9 },
+        { x: 34.4, y: 88.4, outx: -4, outy: -10 }
+      ];
+      animal.birdList = [];
+      for (var i = 0; i < specs.length; i++) {
+        var spec = specs[i];
+        var el = document.createElement("div");
+        el.className = "bird";
+        farm.appendChild(el);
+        animal.birdList.push({
+          el: el,
+          x: spec.x,
+          y: spec.y,
+          homeX: spec.x,
+          homeY: spec.y,
+          outx: spec.outx,
+          outy: spec.outy,
+          flying: false,
+          facing: 1,
+          frame: i,
+          clock: i * 0.08
+        });
+      }
+    }
+
+    function dogBodyLen(animal) {
+      var sh = farm.clientHeight || title.clientHeight || 1;
+      var w = animal.el.offsetWidth;
+      var h = animal.el.offsetHeight;
+      var along = 0;
+      if (w > 2) along = Math.max(along, w / sh * 100);
+      if (h > 2) along = Math.max(along, h / sh * 100);
+      if (along < 4) along = 8;
+      return along;
+    }
+
+    function lawnPaths() {
+      if (lawnPaths.list) return lawnPaths.list;
+      if (!farmSvgEl) return [];
+      var list = [];
+      var sel = "#farm-paths path, #farm-pond path, #farm-pond ellipse, #farm-hedge path, #farm-pen path, #farm-pen ellipse, #farm-barn path, #farm-coop path, #farm-trees path";
+      var nodes = farmSvgEl.querySelectorAll(sel);
+      for (var i = 0; i < nodes.length; i++) {
+        var el = nodes[i];
+        var fill = el.getAttribute("fill");
+        if (!fill || fill === "none") continue;
+        if (!el.isPointInFill) continue;
+        list.push(el);
+      }
+      var field = farmSvgEl.querySelector("#farm-field path");
+      lawnPaths.field = field && field.isPointInFill ? field : null;
+      lawnPaths.list = list;
+      return list;
+    }
+
+    function farmSvgHit(el, x, y) {
+      if (!el || !farmSvgEl || !el.isPointInFill) return false;
+      var pt = farmSvgEl.createSVGPoint();
+      pt.x = x / 100 * 1280;
+      pt.y = y / 100 * 720;
+      try { return el.isPointInFill(pt); } catch (e) { return false; }
+    }
+
+    function birdOnScenery(x, y) {
+      var paths = lawnPaths();
+      var spots = [[0, 0], [-1.15, -1.5], [1.15, -1.5], [-1.15, 0.2], [1.15, 0.2]];
+      for (var s = 0; s < spots.length; s++) {
+        var px = x + spots[s][0];
+        var py = y + spots[s][1];
+        if (px < 2 || px > 98 || py < 18 || py > 97) return true;
+        if (lawnPaths.field && !farmSvgHit(lawnPaths.field, px, py)) return true;
+        for (var i = 0; i < paths.length; i++) {
+          if (farmSvgHit(paths[i], px, py)) return true;
+        }
+      }
+      return false;
+    }
+
+    function birdHitsAnimals(x, y, dog) {
+      var rect = { l: x - 1.5, r: x + 1.5, t: y - 2.6, b: y + 0.3 };
+      for (var i = 0; i < herd.length; i++) {
+        var other = herd[i];
+        var pad = other === dog ? 0.8 : 0.45;
+        if (rectsHit(rect, bodyRect(other, other.x, other.y), pad)) return true;
+      }
+      return false;
+    }
+
+    function chooseBirdLanding(animal) {
+      var len = dogBodyLen(animal);
+      var cx = 0;
+      var cy = 0;
+      var route = animal.route;
+      for (var i = 0; i < route.length; i++) {
+        cx += route[i][0];
+        cy += route[i][1];
+      }
+      cx /= route.length;
+      cy /= route.length;
+      var awayX = (animal.x - cx) * (16 / 9);
+      var awayY = animal.y - cy;
+      var base = Math.atan2(awayY, awayX);
+      if (!isFinite(base)) base = Math.PI / 2;
+      var angles = [base, Math.PI / 2, base + 0.55, base - 0.55, Math.PI / 2 + 0.4, Math.PI / 2 - 0.45, base + 1.1, base - 1.1, Math.PI * 0.72, Math.PI * 0.28];
+      var distances = [3.6, 3.75, 3.5, 3.9];
+      var best = null;
+      var bestScore = -Infinity;
+      for (var a = 0; a < angles.length; a++) {
+        for (var d = 0; d < distances.length; d++) {
+          var dist = len * distances[d];
+          var ang = angles[a];
+          var x = animal.x + Math.cos(ang) * dist * (9 / 16);
+          var y = animal.y + Math.sin(ang) * dist;
+          if (birdOnScenery(x, y) || birdHitsAnimals(x, y, animal)) continue;
+          var got = distPoint(animal.x, animal.y, x, y) / len;
+          if (got < 3.45 || got > 4.05) continue;
+          var nearRoute = distToRoute(route, x, y) / len;
+          if (nearRoute < 2.6) continue;
+          var score = 8 - Math.abs(got - 3.7) * 5 + (y > animal.y ? 0.8 : 0) + nearRoute * 0.15;
+          if (score > bestScore) {
+            bestScore = score;
+            best = { x: x, y: y, lengths: got };
+          }
+        }
+      }
+      if (!best) {
+        best = { x: animal.x - len * 1.6, y: animal.y + len * 3.2, lengths: 3.6 };
+      }
+      animal.birdLengths = best.lengths;
+      return best;
+    }
+
+    function spreadBirdHomes(animal, spot) {
+      var len = dogBodyLen(animal);
+      var dx = (spot.x - animal.x) * (16 / 9);
+      var dy = spot.y - animal.y;
+      var mag = Math.sqrt(dx * dx + dy * dy) || 1;
+      var px = -dy / mag;
+      var py = dx / mag;
+      var side = len * 0.42;
+      var offs = [-1, 0.15, 1];
+      var list = animal.birdList || [];
+      for (var i = 0; i < list.length; i++) {
+        var ox = px * offs[i] * side * (9 / 16);
+        var oy = py * offs[i] * side;
+        var x = spot.x + ox;
+        var y = spot.y + oy;
+        if (birdOnScenery(x, y) || birdHitsAnimals(x, y, animal)) {
+          x = spot.x + (i - 1) * 1.8;
+          y = spot.y;
+        }
+        list[i].homeX = x;
+        list[i].homeY = y;
+        var guard = 0;
+        while (guard < 10 && distPoint(animal.x, animal.y, list[i].homeX, list[i].homeY) < len * 3.4) {
+          var ax = (list[i].homeX - animal.x) * (16 / 9);
+          var ay = list[i].homeY - animal.y;
+          var am = Math.sqrt(ax * ax + ay * ay) || 1;
+          var nx = list[i].homeX + ax / am * len * 0.18 * (9 / 16);
+          var ny = list[i].homeY + ay / am * len * 0.18;
+          if (birdOnScenery(nx, ny)) break;
+          list[i].homeX = nx;
+          list[i].homeY = ny;
+          guard++;
+        }
+      }
+    }
+
+    function parkBirds(animal, snap) {
+      if (!animal.birdList) buildSittingBirds(animal);
+      var spot = chooseBirdLanding(animal);
+      spreadBirdHomes(animal, spot);
+      if (snap) settleBirds(animal);
+      animal.birdsParked = true;
+    }
+
+    function dogTouchesBirds(animal) {
+      var rect = bodyRect(animal, animal.x, animal.y);
+      var list = animal.birdList || [];
+      for (var i = 0; i < list.length; i++) {
+        if (rectsHit(rect, birdBox(list[i]), 0.2)) return true;
+      }
+      return false;
+    }
+
+    function nudgeBirdsOffDog(animal) {
+      var list = animal.birdList;
+      if (!list) return;
+      var dogR = bodyRect(animal, animal.x, animal.y);
+      for (var i = 0; i < list.length; i++) {
+        var b = list[i];
+        var guard = 0;
+        while (guard < 8 && rectsHit(birdBox(b), dogR, 0.45)) {
+          var dx = b.x - animal.x;
+          var dy = b.y - (animal.y - animal.h * 0.45);
+          var mag = Math.sqrt(dx * dx + dy * dy) || 1;
+          b.x += dx / mag * 0.7;
+          b.y += dy / mag * 0.7;
+          if (b.y < 8) b.y = 8;
+          guard++;
+        }
+      }
+    }
+
+    function birdSpot(animal) {
+      var list = animal.birdList;
+      if (!list || !list.length) return [animal.route[0][0], animal.route[0][1]];
+      var x = 0;
+      var y = 0;
+      for (var i = 0; i < list.length; i++) {
+        x += list[i].homeX;
+        y += list[i].homeY;
+      }
+      return [x / list.length, y / list.length];
+    }
+
+    function aimScatter(animal) {
+      var list = animal.birdList || [];
+      for (var i = 0; i < list.length; i++) {
+        var b = list[i];
+        var dx = b.x - animal.x;
+        var dy = b.y - animal.y;
+        var mag = Math.sqrt(dx * dx + dy * dy) || 1;
+        b.outx = dx / mag * 16 + (i - 1) * 2.4;
+        b.outy = Math.min(-7, dy / mag * 10 - 4);
+      }
+    }
+
+    function flyBirds(animal, dt, mode) {
+      var list = animal.birdList;
+      if (!list) return;
+      var rate = mode === "back" ? 2.4 : 1;
+      for (var i = 0; i < list.length; i++) {
+        var b = list[i];
+        b.flying = true;
+        if (mode === "out") {
+          b.x += b.outx * dt;
+          b.y += b.outy * dt;
+          b.facing = b.outx < 0 ? -1 : 1;
+        } else {
+          var dx = b.homeX - b.x;
+          var dy = b.homeY - b.y;
+          b.x += dx * Math.min(1, dt * rate);
+          b.y += dy * Math.min(1, dt * rate);
+          if (Math.abs(dx) > 0.35) b.facing = dx < 0 ? -1 : 1;
+        }
+        if (rectsHit(birdBox(b), bodyRect(animal, animal.x, animal.y), 0.3)) {
+          b.y -= Math.max(1.2, dogBodyLen(animal) * 0.35);
+        }
+      }
+    }
+
+    function birdsHome(animal) {
+      var list = animal.birdList;
+      if (!list || !list.length) return true;
+      for (var i = 0; i < list.length; i++) {
+        if (distPoint(list[i].x, list[i].y, list[i].homeX, list[i].homeY) > 0.7) return false;
+      }
+      return true;
+    }
+
+    function settleBirds(animal) {
+      var list = animal.birdList || [];
+      for (var i = 0; i < list.length; i++) {
+        list[i].x = list[i].homeX;
+        list[i].y = list[i].homeY;
+        list[i].flying = false;
+        list[i].facing = 1;
+      }
+    }
+
+    function dogNearHome(animal) {
+      var home = animal.route[0];
+      return distPoint(animal.x, animal.y, home[0], home[1]) < 2.2;
+    }
+
+    function chargeBlocked(animal, x, y) {
+      if (!bodyInScene(animal, x, y)) return true;
+      if (hitsOther(animal, x, y)) return true;
+      return false;
+    }
+
+    function chargeToward(animal, goal, dt, speed) {
+      var dx = (goal[0] - animal.x) * (16 / 9);
+      var dy = goal[1] - animal.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var reach = dogBodyLen(animal) * 0.9;
+      if (dist < reach || dogTouchesBirds(animal)) {
+        animal.stuck = 0;
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        return true;
+      }
+      var step = speed * dt;
+      if (step > dist) step = dist;
+      if (step < 0.04) step = Math.min(dist, 0.04);
+      var ux = dx / dist;
+      var uy = dy / dist;
+      var angles = [0, 0.35, -0.35, 0.7, -0.7, 1.1, -1.1, 1.5, -1.5];
+      var scales = [1, 0.62, 0.34];
+      var best = null;
+      for (var s = 0; s < scales.length && !best; s++) {
+        var hop = step * scales[s];
+        for (var i = 0; i < angles.length; i++) {
+          var ang = angles[i];
+          var c = Math.cos(ang);
+          var sn = Math.sin(ang);
+          var vx = ux * c - uy * sn;
+          var vy = ux * sn + uy * c;
+          var nx = animal.x + vx * hop * (9 / 16);
+          var ny = animal.y + vy * hop;
+          if (chargeBlocked(animal, nx, ny)) continue;
+          if (distPoint(nx, ny, goal[0], goal[1]) >= dist - 0.001) continue;
+          best = { x: nx, y: ny, vx: vx, vy: vy };
+          break;
+        }
+      }
+      if (!best) {
+        animal.stuck = (animal.stuck || 0) + dt;
+        animal.moving = true;
+        animal.vx = ux;
+        animal.vy = uy;
+        return false;
+      }
+      animal.stuck = 0;
+      animal.x = best.x;
+      animal.y = best.y;
+      animal.moving = true;
+      animal.vx = best.vx;
+      animal.vy = best.vy;
+      return false;
+    }
+
+    function startDogBark(animal, charge) {
+      animal.phase = "bark";
+      animal.phaseT = 0;
+      animal.stuck = 0;
+      animal.moving = false;
+      animal.vx = 0;
+      animal.vy = 0;
+      animal.faceLock = true;
+      animal.facing = charge[0] < animal.x ? -1 : 1;
+      animal.goal = [animal.route[0][0], animal.route[0][1]];
+      aimScatter(animal);
+      setAction(animal, "bark");
+      playBark();
+      playTakeoff();
+    }
+
+    function beginBirdLook(animal) {
+      animal.phase = "look";
+      parkBirds(animal, false);
+      var spot = birdSpot(animal);
+      animal.phase = "look";
+      animal.phaseT = 0;
+      animal.phaseLen = 1;
+      animal.stuck = 0;
+      animal.pauseLeft = 0;
+      animal.goal = spot;
+      animal.facing = spot[0] < animal.x ? -1 : 1;
+      animal.faceLock = true;
+      animal.moving = false;
+      animal.vx = 0;
+      animal.vy = 0;
+      setAction(animal, "look");
+    }
+
+    function dogChase(animal, dt, now) {
+      if (!animal.birdList) buildSittingBirds(animal);
+      if ((animal.phase === "wander" || !animal.phase) && farmSvgEl && animal.rig && animal.rig.pxPerUnit) {
+        var lenNow = dogBodyLen(animal);
+        if (!animal.birdsParked || Math.abs(lenNow - (animal.parkedLen || 0)) > 0.45) {
+          parkBirds(animal, true);
+          animal.parkedLen = lenNow;
+        }
+      }
+      nudgeBirdsOffDog(animal);
+      if (animal.phase === "wander" || !animal.phase) {
+        setAction(animal, "walk");
+        animal.faceLock = false;
+        wander(animal, dt);
+        if (animal.birdClock == null) animal.birdClock = now;
+        if (now - animal.birdClock >= 30000) beginBirdLook(animal);
+        return;
+      }
+      if (animal.phase === "look") {
+        animal.phaseT += dt;
+        setAction(animal, "look");
+        animal.faceLock = true;
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        animal.pauseLeft = 0;
+        flyBirds(animal, dt, "back");
+        var lookAt = animal.goal || birdSpot(animal);
+        animal.facing = lookAt[0] < animal.x ? -1 : 1;
+        if (animal.phaseT >= animal.phaseLen) {
+          settleBirds(animal);
+          animal.phase = "chase";
+          animal.phaseT = 0;
+          animal.stuck = 0;
+          animal.goal = birdSpot(animal);
+          animal.chaseFrom = [animal.x, animal.y];
+          animal.facing = animal.goal[0] < animal.x ? -1 : 1;
+          animal.faceLock = true;
+          animal.pauseLeft = 0;
+          setAction(animal, "run");
+        }
+        return;
+      }
+      if (animal.phase === "chase") {
+        animal.phaseT += dt;
+        setAction(animal, "run");
+        animal.faceLock = true;
+        animal.pauseLeft = 0;
+        var charge = animal.goal || birdSpot(animal);
+        animal.goal = charge;
+        animal.facing = charge[0] < animal.x - 0.2 ? -1 : 1;
+        var arrived = chargeToward(animal, charge, dt, 11);
+        if (arrived || animal.phaseT > 12) startDogBark(animal, charge);
+        return;
+      }
+      if (animal.phase === "bark") {
+        animal.phaseT += dt;
+        setAction(animal, "bark");
+        animal.faceLock = true;
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        animal.pauseLeft = 0;
+        flyBirds(animal, dt, "out");
+        if (animal.phaseT >= dogBarkDur()) {
+          animal.phase = "scatter";
+          animal.phaseT = 0;
+          animal.stuck = 0;
+          animal.goal = [animal.route[0][0], animal.route[0][1]];
+          animal.faceLock = false;
+          setAction(animal, "walk");
+        }
+        return;
+      }
+      if (animal.phase === "scatter") {
+        animal.phaseT += dt;
+        setAction(animal, "walk");
+        animal.faceLock = false;
+        animal.pauseLeft = 0;
+        flyBirds(animal, dt, "out");
+        stepToward(animal, animal.goal, dt, 2.2);
+        if (animal.phaseT >= 2.35) {
+          animal.phase = "return";
+          animal.phaseT = 0;
+          animal.stuck = 0;
+        }
+        return;
+      }
+      if (animal.phase === "return") {
+        animal.phaseT += dt;
+        setAction(animal, "walk");
+        animal.faceLock = false;
+        animal.pauseLeft = 0;
+        flyBirds(animal, dt, "back");
+        stepToward(animal, animal.goal, dt, 2);
+        if (birdsHome(animal) && (dogNearHome(animal) || animal.phaseT > 5)) {
+          settleBirds(animal);
+          settleOnRoute(animal);
+          animal.phase = "wander";
+          animal.phaseT = 0;
+          animal.birdClock = now;
+          animal.moving = false;
+          animal.vx = 0;
+          animal.vy = 0;
+          animal.faceLock = false;
+          setAction(animal, "walk");
+        }
+      }
+    }
+
+    function mindDog(animal, dt, now) {
+      if (!birdChaseEnabled) {
+        if (animal.phase !== "wander") {
+          clearBirds(animal);
+          animal.phase = "wander";
+        }
+        setAction(animal, "walk");
+        wander(animal, dt);
+        return;
+      }
+      if (!animal.phase) animal.phase = "wander";
+      dogChase(animal, dt, now);
+    }
+
+    function goatEatLen() {
+      return 3;
+    }
+
+    function dogBarkDur() {
+      var clip = document.getElementById("clip-dog");
+      var d = clip && clip.duration;
+      if (d && isFinite(d) && d > 0.15 && d < 5) return d;
+      return 0.85;
+    }
+
+    function applyBox(animal, action) {
+    }
+
+    function birdBox(b) {
+      var h = 2.4;
+      var w = 2.2;
+      var rig = b.rig;
+      var sh = farm.clientHeight || title.clientHeight || 1;
+      var sw = farm.clientWidth || title.clientWidth || 1;
+      if (rig && rig.bbox && rig.pxPerUnit) {
+        var visH = (rig.config.groundLineY - rig.bbox.y) * rig.pxPerUnit;
+        h = visH / sh * 100;
+        w = rig.bbox.width * rig.pxPerUnit / sw * 100;
+      }
+      return { l: b.x - w / 2, r: b.x + w / 2, t: b.y - h, b: b.y };
+    }
+
+    function hitsBirds(animal, x, y) {
+      var rect = bodyRect(animal, x, y);
+      for (var i = 0; i < herd.length; i++) {
+        var list = herd[i].birdList;
+        if (!list) continue;
+        for (var j = 0; j < list.length; j++) {
+          if (rectsHit(rect, birdBox(list[j]), 0.12)) return true;
+        }
+      }
+      return false;
+    }
+
+    function offPathBlocked(animal, x, y) {
+      if (!bodyInScene(animal, x, y)) return true;
+      if (hitsOther(animal, x, y)) return true;
+      if (hitsBirds(animal, x, y)) return true;
+      return false;
+    }
+
+    function spotFree(animal, x, y, action) {
+      var ow = animal.w;
+      var oh = animal.h;
+      applyBox(animal, action);
+      var free = !offPathBlocked(animal, x, y);
+      animal.w = ow;
+      animal.h = oh;
+      return free;
+    }
+
+    function stepToward(animal, goal, dt, speed) {
+      var dx = (goal[0] - animal.x) * (16 / 9);
+      var dy = goal[1] - animal.y;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 0.22) {
+        if (!offPathBlocked(animal, goal[0], goal[1])) {
+          animal.x = goal[0];
+          animal.y = goal[1];
+        }
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        return !offPathBlocked(animal, animal.x, animal.y) && distPoint(animal.x, animal.y, goal[0], goal[1]) < 0.28;
+      }
+      var step = speed * dt;
+      if (step > dist) step = dist;
+      var nx = animal.x + (dx / dist) * step * (9 / 16);
+      var ny = animal.y + (dy / dist) * step;
+      if (offPathBlocked(animal, nx, ny)) {
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        animal.stuck = (animal.stuck || 0) + dt;
+        return false;
+      }
+      animal.stuck = 0;
+      animal.x = nx;
+      animal.y = ny;
+      animal.moving = step > 0.0008;
+      animal.vx = dx / dist;
+      animal.vy = dy / dist;
+      return false;
+    }
+
+    function settleOnRoute(animal) {
+      var proj = project(animal.route, animal.x, animal.y);
+      animal.zone = animal.route;
+      animal.seg = proj.seg;
+      animal.u = proj.u;
+      animal.side = proj.side;
+      if (animal.side > animal.slack) animal.side = animal.slack;
+      if (animal.side < -animal.slack) animal.side = -animal.slack;
+      animal.sideTarget = animal.side;
+    }
+
+    function beginGoatEat(animal) {
+      var spot = animal.hedgeSpot;
+      applyBox(animal, "eat");
+      if (offPathBlocked(animal, spot[0], spot[1])) {
+        applyBox(animal, "walk");
+        return false;
+      }
+      animal.x = spot[0];
+      animal.y = spot[1];
+      animal.phase = "eat";
+      var full = goatEatLen();
+      animal.phaseT = animal.resumeEat ? Math.max(0, full - animal.resumeEat) : 0;
+      animal.resumeEat = 0;
+      if (animal.ateAt == null) animal.ateAt = animal.clock;
+      animal.moving = false;
+      animal.vx = 0;
+      animal.vy = 0;
+      animal.pauseLeft = 0;
+      animal.bob = 0;
+      animal.stuck = 0;
+      animal.facing = -1;
+      animal.faceLock = true;
+      setAction(animal, "eat");
+      return true;
+    }
+
+    function finishGoatEat(animal) {
+      animal.eatStamp = animal.ateAt;
+      animal.ateAt = null;
+      animal.resumeEat = 0;
+      animal.phase = "return";
+      animal.phaseT = 0;
+      animal.goal = [animal.route[0][0], animal.route[0][1]];
+      animal.faceLock = false;
+      animal.bob = 0;
+      animal.pauseLeft = 0;
+      animal.stuck = 0;
+      setAction(animal, "walk");
+      applyBox(animal, "walk");
+    }
+
+    function resumeGoatWander(animal) {
+      settleOnRoute(animal);
+      var period = 12.5;
+      var lead = 3.5;
+      var nextEat = (animal.eatStamp != null ? animal.eatStamp : animal.clock) + period;
+      var approachAt = nextEat - lead;
+      animal.eatAt = nextEat;
+      animal.eatStamp = null;
+      animal.phaseT = 0;
+      animal.stuck = 0;
+      animal.faceLock = false;
+      animal.speedMin = animal.baseMin;
+      animal.speedMax = animal.baseMax;
+      setAction(animal, "walk");
+      applyBox(animal, "walk");
+      if (animal.clock >= approachAt - 0.02) {
+        animal.phase = "approach";
+        animal.pauseLeft = 0;
+        animal.facing = -1;
+        animal.faceLock = true;
+        return;
+      }
+      animal.phase = "wander";
+      animal.phaseLen = approachAt - animal.clock;
+    }
+
+    function mindGoat(animal, dt) {
+      animal.clock = (animal.clock || 0) + dt;
+      var spot = animal.hedgeSpot;
+      var eatLen = goatEatLen();
+
+      if (animal.phase === "eat") {
+        applyBox(animal, "eat");
+        animal.facing = -1;
+        animal.faceLock = true;
+        animal.pauseLeft = 0;
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
+        if (!bodyInScene(animal, animal.x, animal.y) || hitsOther(animal, animal.x, animal.y) || hitsBirds(animal, animal.x, animal.y)) {
+          animal.resumeEat = Math.max(0.4, eatLen - animal.phaseT);
+          animal.phase = "yield";
+          animal.faceLock = false;
+          setAction(animal, "walk");
+          applyBox(animal, "walk");
+          var guard = 0;
+          while (guard < 10 && (hitsOther(animal, animal.x, animal.y) || hitsBirds(animal, animal.x, animal.y))) {
+            var goal = animal.route[0];
+            var dx = (goal[0] - animal.x) * (16 / 9);
+            var dy = goal[1] - animal.y;
+            var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            var hop = dist < 0.9 ? dist : 0.9;
+            var nx = animal.x + (dx / dist) * hop * (9 / 16);
+            var ny = animal.y + (dy / dist) * hop;
+            if (!bodyInScene(animal, nx, ny) || hitsOther(animal, nx, ny)) break;
+            animal.x = nx;
+            animal.y = ny;
+            guard++;
+          }
+          animal.moving = true;
+          return;
+        }
+        animal.phaseT += dt;
+        setAction(animal, "eat");
+        if (animal.phaseT >= eatLen) finishGoatEat(animal);
+        return;
+      }
+
+      if (animal.phase === "yield") {
+        applyBox(animal, "walk");
+        setAction(animal, "walk");
+        animal.pauseLeft = 0;
+        animal.faceLock = false;
+        var crowded = hitsOther(animal, animal.x, animal.y) || hitsBirds(animal, animal.x, animal.y);
+        if (crowded) stepToward(animal, animal.route[0], dt, 2.2);
+        else if (!spotFree(animal, spot[0], spot[1], "eat")) {
+          animal.moving = false;
+          animal.vx = 0;
+          animal.vy = 0;
+          animal.stuck = (animal.stuck || 0) + dt;
+        } else {
+          animal.phase = "approach";
+          animal.eatAt = animal.clock;
+          animal.pauseLeft = 0;
+          animal.facing = -1;
+          animal.faceLock = true;
+        }
+        return;
+      }
+
+      if (animal.phase === "approach") {
+        applyBox(animal, "walk");
+        setAction(animal, "walk");
+        animal.pauseLeft = 0;
+        animal.facing = -1;
+        animal.faceLock = true;
+        var remain = (animal.eatAt || 3.5) - animal.clock;
+        if (remain < 0.35) remain = 0.35;
+        var dist = distPoint(animal.x, animal.y, spot[0], spot[1]);
+        var speed = dist / remain;
+        if (speed < 1.15) speed = 1.15;
+        if (speed > 3.4) speed = 3.4;
+        var arrived = stepToward(animal, spot, dt, speed);
+        if (arrived && animal.clock >= (animal.eatAt || 3.5) - 0.04) beginGoatEat(animal);
+        return;
+      }
+
+      if (animal.phase === "return") {
+        applyBox(animal, "walk");
+        setAction(animal, "walk");
+        animal.pauseLeft = 0;
+        animal.faceLock = false;
+        var back = stepToward(animal, animal.goal, dt, 2);
+        if (back || distToRoute(animal.route, animal.x, animal.y) <= animal.slack * 0.35) {
+          if (distToRoute(animal.route, animal.x, animal.y) <= animal.slack) resumeGoatWander(animal);
+        }
+        return;
+      }
+
+      animal.phaseT += dt;
+      setAction(animal, "walk");
+      animal.faceLock = false;
+      wander(animal, dt);
+      if (animal.phaseT >= animal.phaseLen) {
+        animal.phase = "approach";
+        animal.phaseT = 0;
+        animal.pauseLeft = 0;
+        animal.stuck = 0;
+        animal.facing = -1;
+        animal.faceLock = true;
+        animal.flow = -0.05;
+      }
+    }
+
+    function think(animal, dt, now) {
+      animal.bob = 0;
+      if (animal.kind === "chicken") mindChicken(animal, dt);
+      else if (animal.kind === "horse") mindHorse(animal, dt);
+      else if (animal.kind === "duck") mindDuck(animal, dt);
+      else if (animal.kind === "dog") mindDog(animal, dt, now);
+      else if (animal.kind === "goat") mindGoat(animal, dt);
+      else mindWanderOnly(animal, dt);
+    }
+
+    function separate() {
+      for (var pass = 0; pass < 3; pass++) {
+        for (var i = 0; i < herd.length; i++) {
+          for (var j = i + 1; j < herd.length; j++) {
+            var a = herd[i];
+            var b = herd[j];
+            if (!rectsHit(bodyRect(a, a.x, a.y), bodyRect(b, b.x, b.y), 0.12)) continue;
+            var aBob = a.bob || 0;
+            var bBob = b.bob || 0;
+            a.bob = 0;
+            b.bob = 0;
+            if (!rectsHit(bodyRect(a, a.x, a.y), bodyRect(b, b.x, b.y), 0.12)) continue;
+            a.bob = aBob;
+            b.bob = bBob;
+            var aMoved = a.x !== a.ox || a.y !== a.oy;
+            var bMoved = b.x !== b.ox || b.y !== b.oy;
+            var aCharge = a.kind === "dog" && a.phase === "chase";
+            var bCharge = b.kind === "dog" && b.phase === "chase";
+            if (aCharge || bCharge) {
+              if (aCharge && bMoved && !bCharge) revert(b);
+              else if (bCharge && aMoved && !aCharge) revert(a);
+              continue;
+            }
+            if (bMoved) revert(b);
+            if (rectsHit(bodyRect(a, a.x, a.y), bodyRect(b, b.x, b.y), 0.08) && aMoved) revert(a);
+          }
+        }
+      }
+    }
+
+    function fitBox(el, hPct, sheet) {
+      var sh = farm.clientHeight;
+      if (!sh || sh < 2) {
+        el.style.width = "";
+        el.style.height = hPct + "%";
+        el.style.aspectRatio = sheet.width + " / " + sheet.height;
+        return;
+      }
+      var hPx = sh * hPct / 100;
+      var wPx = hPx * sheet.width / sheet.height;
+      el.style.aspectRatio = "auto";
+      el.style.height = hPx + "px";
+      el.style.width = wPx + "px";
+    }
+
+    function showAnimal(animal, dt, sw, sh) {
+      showRigged(animal, dt, sw, sh);
+    }
+
+    function placeBirds(animal, dt, sw, sh) {
+      var list = animal.birdList;
+      if (!list) return;
+      for (var i = 0; i < list.length; i++) {
+        var b = list[i];
+        ensureBirdRig(b);
+        var el = b.el;
+        if (b.rig && b.rig.ready) driveBird(b, dt);
+        var w = el.offsetWidth;
+        var h = el.offsetHeight;
+        el.style.left = (b.x / 100 * sw - w / 2) + "px";
+        el.style.top = (b.y / 100 * sh - h) + "px";
+        el.style.zIndex = String(12 + Math.round(b.y));
+        el.style.transform = "none";
+      }
+    }
+
+    function place(animal, sw, sh, dt) {
+      var el = animal.el;
+      var inst = animal.x - (animal.prevX == null ? animal.x : animal.prevX);
+      animal.flow = (animal.flow || 0) * 0.55 + inst;
+      if (animal.moving && !animal.faceLock) {
+        if (animal.flow < -0.0045) animal.facing = -1;
+        else if (animal.flow > 0.0045) animal.facing = 1;
+      }
+      animal.prevX = animal.x;
+      showAnimal(animal, dt, sw, sh);
+      var footY = animal.y + (animal.bob || 0);
+      var w = el.offsetWidth;
+      var h = el.offsetHeight;
+      el.style.left = (animal.x / 100 * sw - w / 2) + "px";
+      el.style.top = (footY / 100 * sh - h) + "px";
+      el.style.zIndex = String(10 + Math.round(footY));
+    }
+
+    function showRigged(animal, dt, sw, sh) {
+      var el = animal.el;
+      var clip = animal.clip;
+      clip.style.backgroundImage = "none";
+      clip.classList.remove("back");
+      el.classList.add("rigged");
+      if (animal.kind === "cow") fitBox(el, tall.cow, { width: 372, height: 316 });
+      if (animal.rig && animal.rig.ready) driveRig(animal, dt || 0, sw || 0);
+      if (animal.kind === "cow") {
+        animal.h = tall.cow;
+        animal.w = tall.cow * (372 / 316) * (9 / 16);
+      } else if (animal.rig && animal.rig.pxPerUnit && animal.rig.bbox && sw && sh) {
+        var px = animal.rig.pxPerUnit;
+        var bb = animal.rig.bbox;
+        var visH = (animal.rig.config.groundLineY - bb.y) * px;
+        if (visH < 1) visH = bb.height * px;
+        animal.h = visH / sh * 100;
+        animal.w = bb.width * px / sw * 100;
+      }
+      animal.shownFile = animal.kind + ".svg";
+      animal.shownCount = 1;
+      el.dataset.action = animal.action;
+      el.dataset.moving = animal.moving ? "1" : "0";
+      el.dataset.phase = animal.phase || "";
+      el.dataset.frame = "rig";
+      el.dataset.rig = animal.rig && animal.rig.mode ? animal.rig.mode : "";
+    }
+
+    function rigHeadSpot(animal) {
+      var rig = animal.rig;
+      var head = rig && rig.parts.head && rig.parts.head.el;
+      if (!head) return null;
+      var host = animal.el.getBoundingClientRect();
+      var box = head.getBoundingClientRect();
+      if (host.width < 2 || host.height < 2 || box.height < 1 || box.width < 1) return null;
+      return [((box.left + box.right) * 0.5 - host.left) / host.width, (box.top - host.top) / host.height];
+    }
+
+    // Generic part rig. Any later animal can mount its own SVG with the same
+    // config shape: part ids, pivots, safe rotation ranges, and a ground line.
+    // A pose is { root, parts }. A cycle samples a pose from phase, or blends
+    // keyframes. Rotations are clamped to each part's safe range.
+    function createRig(config) {
+      var rig = {
+        config: config,
+        cycles: {},
+        parts: {},
+        ready: false,
+        mode: "idle",
+        phase: 0,
+        phases: {},
+        clock: 0,
+        pose: null,
+        blend: null,
+        face: 1,
+        turnFrom: 1,
+        turnTo: 1,
+        pxPerUnit: 0,
+        originX: config.viewBox[2] / 2,
+        bbox: null
+      };
+
+      function num(n) {
+        return Math.round(n * 1000) / 1000;
+      }
+
+      function fin(n, fallback) {
+        return (typeof n === "number" && isFinite(n)) ? n : fallback;
+      }
+
+      function restPose() {
+        var pose = { root: { x: 0, y: 0, rotate: 0, scaleX: 1, scaleY: 1 }, parts: {} };
+        config.parts.forEach(function (part) {
+          pose.parts[part.id] = { rotate: 0, x: 0, y: 0, scaleX: 1, scaleY: 1 };
+        });
+        return pose;
+      }
+
+      function normalizePose(raw) {
+        var pose = restPose();
+        var root = (raw && raw.root) || {};
+        pose.root.x = fin(root.x, 0);
+        pose.root.y = fin(root.y, 0);
+        pose.root.rotate = fin(root.rotate, 0);
+        pose.root.scaleX = fin(root.scaleX, 1);
+        pose.root.scaleY = fin(root.scaleY, 1);
+        config.parts.forEach(function (part) {
+          var src = raw && raw.parts && raw.parts[part.id];
+          if (!src) return;
+          var dst = pose.parts[part.id];
+          dst.rotate = fin(src.rotate, 0);
+          dst.x = fin(src.x, 0);
+          dst.y = fin(src.y, 0);
+          dst.scaleX = fin(src.scaleX, 1);
+          dst.scaleY = fin(src.scaleY, 1);
+        });
+        return pose;
+      }
+
+      function blendPose(a, b, u) {
+        var pose = restPose();
+        pose.root.x = a.root.x + (b.root.x - a.root.x) * u;
+        pose.root.y = a.root.y + (b.root.y - a.root.y) * u;
+        pose.root.rotate = a.root.rotate + (b.root.rotate - a.root.rotate) * u;
+        pose.root.scaleX = a.root.scaleX + (b.root.scaleX - a.root.scaleX) * u;
+        pose.root.scaleY = a.root.scaleY + (b.root.scaleY - a.root.scaleY) * u;
+        config.parts.forEach(function (part) {
+          var pa = a.parts[part.id];
+          var pb = b.parts[part.id];
+          var dst = pose.parts[part.id];
+          dst.rotate = pa.rotate + (pb.rotate - pa.rotate) * u;
+          dst.x = pa.x + (pb.x - pa.x) * u;
+          dst.y = pa.y + (pb.y - pa.y) * u;
+          dst.scaleX = pa.scaleX + (pb.scaleX - pa.scaleX) * u;
+          dst.scaleY = pa.scaleY + (pb.scaleY - pa.scaleY) * u;
+        });
+        return pose;
+      }
+
+      function sampleKeyframes(frames, phase) {
+        if (!frames.length) return restPose();
+        if (phase <= frames[0].t) return normalizePose(frames[0]);
+        for (var i = 1; i < frames.length; i++) {
+          if (phase <= frames[i].t) {
+            var span = frames[i].t - frames[i - 1].t || 1;
+            var u = (phase - frames[i - 1].t) / span;
+            return blendPose(normalizePose(frames[i - 1]), normalizePose(frames[i]), u);
+          }
+        }
+        return normalizePose(frames[frames.length - 1]);
+      }
+
+      function poseAt(cycle, phase, ctx) {
+        if (!cycle) return restPose();
+        if (cycle.sample) return normalizePose(cycle.sample(phase, ctx || {}, config));
+        if (cycle.pose) return normalizePose(cycle.pose);
+        if (cycle.keyframes) return sampleKeyframes(cycle.keyframes, phase);
+        return restPose();
+      }
+
+      function clampPart(part, pose) {
+        var lo = part.range[0];
+        var hi = part.range[1];
+        var rot = pose.rotate;
+        if (rot < lo) rot = lo;
+        if (rot > hi) rot = hi;
+        pose.rotate = rot;
+      }
+
+      // CSS applies the list right to left, around the part's transform-origin
+      // (its pivot). Rotate and scale first, then lift in parent space.
+      function cssTransform(pose) {
+        var t = "";
+        if (pose.x || pose.y) t += "translate(" + num(pose.x) + "px, " + num(pose.y) + "px) ";
+        if (pose.rotate) t += "rotate(" + num(pose.rotate) + "deg) ";
+        if (pose.scaleX !== 1 || pose.scaleY !== 1) t += "scale(" + num(pose.scaleX) + ", " + num(pose.scaleY) + ")";
+        t = t.trim();
+        return t || "none";
+      }
+
+      rig.defineCycle = function (name, cycle) {
+        rig.cycles[name] = cycle;
+      };
+
+      rig.definePose = function (name, pose) {
+        rig.cycles[name] = { pose: pose };
+      };
+
+      rig.play = function (name, opts) {
+        opts = opts || {};
+        if (name === rig.mode && !opts.restart) return;
+        if (rig.mode) rig.phases[rig.mode] = rig.phase;
+        var dur = opts.blend == null ? 0.16 : opts.blend;
+        rig.blend = dur > 0 ? { from: rig.pose || restPose(), u: 0, dur: dur } : null;
+        rig.mode = name;
+        rig.phase = opts.restart ? 0 : (rig.phases[name] || 0);
+      };
+
+      rig.apply = function (pose) {
+        config.parts.forEach(function (part) {
+          var slot = rig.parts[part.id];
+          var local = pose.parts[part.id];
+          if (!slot || !slot.el || !local) return;
+          clampPart(part, local);
+          var next = cssTransform(local);
+          if (slot.written !== next) {
+            slot.el.style.transform = next;
+            slot.written = next;
+          }
+        });
+        if (rig.wrap) {
+          rig.wrap.style.transformBox = "view-box";
+          rig.wrap.style.transformOrigin = num(rig.originX) + "px " + num(config.groundLineY) + "px";
+          var root = cssTransform(pose.root);
+          if (rig.rootWritten !== root) {
+            rig.wrap.style.transform = root;
+            rig.rootWritten = root;
+          }
+        }
+        rig.pose = pose;
+      };
+
+      rig.step = function (dt, ctx) {
+        if (!rig.ready) return;
+        if (dt < 0) dt = 0;
+        if (dt > 0.05) dt = 0.05;
+        rig.clock += dt;
+        ctx = ctx || {};
+        var cycle = rig.cycles[rig.mode];
+        if (cycle && cycle.stride) {
+          var dist = fin(ctx.distance, 0);
+          if (dist < 0) dist = 0;
+          rig.phase = (rig.phase + dist / cycle.stride) % 1;
+        } else if (cycle && cycle.duration) {
+          if (cycle.once) {
+            rig.phase += dt / cycle.duration;
+            if (rig.phase > 1) rig.phase = 1;
+          } else {
+            rig.phase = (rig.phase + dt / cycle.duration) % 1;
+          }
+        }
+        var target = poseAt(cycle, rig.phase, ctx);
+        var pose = target;
+        if (rig.blend) {
+          rig.blend.u += rig.blend.dur ? dt / rig.blend.dur : 1;
+          if (rig.blend.u >= 1) rig.blend = null;
+          else {
+            var u = rig.blend.u;
+            u = u * u * (3 - 2 * u);
+            pose = blendPose(rig.blend.from, target, u);
+          }
+        }
+        rig.apply(pose);
+      };
+
+      rig.setShown = function (id, on) {
+        var slot = rig.parts[id];
+        if (!slot || !slot.el) return;
+        var next = on ? "inline" : "none";
+        if (slot.shown === next) return;
+        slot.el.style.display = next;
+        if (on) slot.el.removeAttribute("display");
+        slot.shown = next;
+      };
+
+      rig.pose = restPose();
+      return rig;
+    }
+
+    function prefixSvgIds(text, prefix) {
+      var ids = [];
+      var re = /\sid="([^"]+)"/g;
+      var match;
+      while ((match = re.exec(text))) ids.push(match[1]);
+      ids.sort(function (a, b) { return b.length - a.length; });
+      var out = text;
+      for (var i = 0; i < ids.length; i++) {
+        var id = ids[i];
+        var pid = prefix + id;
+        out = out.split('id="' + id + '"').join('id="' + pid + '"');
+        out = out.split("url(#" + id + ")").join("url(#" + pid + ")");
+        out = out.split("url('#" + id + "')").join("url('#" + pid + "')");
+        out = out.split('href="#' + id + '"').join('href="#' + pid + '"');
+        out = out.split("href='#" + id + "'").join("href='#" + pid + "'");
+        out = out.split('xlink:href="#' + id + '"').join('xlink:href="#' + pid + '"');
+      }
+      return out;
+    }
+
+    function rememberBBox(rig) {
+      if (!rig.wrap) return;
+      var bb = rig.wrap.getBBox();
+      if (!bb || !(bb.height > 10)) return;
+      rig.bbox = { x: bb.x, y: bb.y, width: bb.width, height: bb.height };
+      rig.originX = bb.x + bb.width / 2;
+    }
+
+    function mountRig(rig, svgText, hostEl, prefix) {
+      var doc = new DOMParser().parseFromString(prefixSvgIds(svgText, prefix), "image/svg+xml");
+      if (!doc || doc.querySelector("parsererror")) return false;
+      var svg = doc.documentElement;
+      if (!svg || String(svg.tagName).toLowerCase() !== "svg") return false;
+      var wrap = svg.ownerDocument.createElementNS(svg.namespaceURI, "g");
+      wrap.setAttribute("id", prefix + "root");
+      while (svg.firstChild) wrap.appendChild(svg.firstChild);
+      svg.appendChild(wrap);
+      rig.svg = svg;
+      rig.wrap = wrap;
+      rig.prefix = prefix;
+      svg.setAttribute("class", "rig-svg");
+      svg.setAttribute("preserveAspectRatio", "xMinYMin meet");
+      svg.style.overflow = "visible";
+      svg.style.position = "absolute";
+      var missing = false;
+      rig.config.parts.forEach(function (part) {
+        var el = svg.querySelector("#" + prefix + part.id);
+        if (!el) missing = true;
+        rig.parts[part.id] = { el: el, pivot: part.pivot, range: part.range, written: null };
+      });
+      if (missing) return false;
+      rig.config.paintOrder.forEach(function (id) {
+        var slot = rig.parts[id];
+        var part = partById(rig.config, id);
+        if (!slot || !slot.el) return;
+        if (part && part.parent) return;
+        if (slot.el.parentNode !== wrap) return;
+        wrap.appendChild(slot.el);
+      });
+      var probe = document.createElement("div");
+      probe.style.cssText = "position:absolute;left:0;top:0;width:600px;height:480px;visibility:hidden;pointer-events:none;";
+      document.body.appendChild(probe);
+      probe.appendChild(svg);
+      rememberBBox(rig);
+      if (!rig.bbox) {
+        var vb0 = rig.config.viewBox;
+        rig.bbox = rig.config.sheetFit
+          ? { x: 86, y: 104, width: 484, height: 342 }
+          : { x: 0, y: 0, width: vb0[2], height: vb0[3] };
+        rig.originX = rig.bbox.x + rig.bbox.width / 2;
+      }
+      hostEl.appendChild(svg);
+      probe.parentNode.removeChild(probe);
+      rig.ready = true;
+      rig.apply(rig.pose);
+      return true;
+    }
+
+    function viewHeight() {
+      var h = farm.clientHeight;
+      if (h > 2) return h;
+      if (title && title.clientHeight > 2) return title.clientHeight;
+      return 0;
+    }
+
+    function dogVisiblePx(farmH) {
+      var dog = null;
+      for (var i = 0; i < herd.length; i++) {
+        if (herd[i].kind === "dog") dog = herd[i];
+      }
+      if (!dog || !dog.rig || !dog.rig.pxPerUnit || !dog.rig.bbox || !dog.rig.config) return farmH * 0.062;
+      var vis = dog.rig.config.groundLineY - dog.rig.bbox.y;
+      var tallPx = vis > 1 ? vis * dog.rig.pxPerUnit : 0;
+      var widePx = dog.rig.bbox.width * dog.rig.pxPerUnit;
+      return Math.max(tallPx, widePx * 0.95, farmH * 0.062);
+    }
+
+    function cowUnitPx(farmH) {
+      var cowH = farmH * (tall.cow / 100);
+      var span = 342;
+      if (cowAnimal && cowAnimal.rig && cowAnimal.rig.bbox) {
+        span = cowRigConfig.groundLineY - cowAnimal.rig.bbox.y;
+      }
+      if (span < 1) span = 342;
+      return cowH / span;
+    }
+
+    function sizeFloorPx(kind, farmH) {
+      var pct = { cow: 7.2, sheep: 5.6, chicken: 6.5, horse: 9.6, duck: 6.5, dog: 6.2, goat: 6.2 };
+      return farmH * ((pct[kind] || 0) / 100);
+    }
+
+    function layoutRig(rig, hostEl) {
+      var svg = rig.svg;
+      if (!svg || !rig.bbox) return false;
+      var fit = rig.config.sheetFit;
+      if (fit) {
+        var H = hostEl.clientHeight;
+        var W = hostEl.clientWidth;
+        if (H < 2 || W < 2) return false;
+        if (rig.hostW === W && rig.hostH === H && rig.pxPerUnit) return true;
+        var vb = rig.config.viewBox;
+        var ground = rig.config.groundLineY;
+        var span = ground - rig.bbox.y;
+        if (span < 1) return false;
+        var px = (H * (fit.foot - fit.top)) / span;
+        svg.style.width = (Math.round(vb[2] * px * 100) / 100) + "px";
+        svg.style.height = (Math.round(vb[3] * px * 100) / 100) + "px";
+        svg.style.top = (Math.round((fit.foot * H - ground * px) * 100) / 100) + "px";
+        svg.style.left = (Math.round((W / 2 - rig.originX * px) * 100) / 100) + "px";
+        rig.pxPerUnit = px;
+        rig.hostW = W;
+        rig.hostH = H;
+        return true;
+      }
+      var farmH = viewHeight();
+      if (farmH < 2) return false;
+      var scale = rig.config.scaleToCowUnits || 1;
+      if (rig.config.sizeBoost) scale *= rig.config.sizeBoost;
+      var bb = rig.bbox;
+      var groundY = rig.config.groundLineY;
+      var visH = groundY - bb.y;
+      if (visH < 1) visH = bb.height;
+      var px2 = cowUnitPx(farmH) * scale;
+      var floorPx = sizeFloorPx(rig.config.kind, farmH);
+      var paintH = bb.height > 1 ? bb.height : visH;
+      if (floorPx > 0 && paintH * px2 < floorPx) px2 = floorPx / paintH;
+      if (rig.config.matchDog && visH > 1) {
+        var dogPx = dogVisiblePx(farmH);
+        if (dogPx > 2 && visH * px2 < dogPx) px2 = dogPx / visH;
+      }
+      if (rig.pxPerUnit === px2 && rig.laidH === farmH) return true;
+      var hostW = Math.max(1, bb.width * px2);
+      var hostH = Math.max(1, visH * px2);
+      hostEl.style.width = (Math.round(hostW * 100) / 100) + "px";
+      hostEl.style.height = (Math.round(hostH * 100) / 100) + "px";
+      var box = rig.config.viewBox;
+      svg.style.width = (Math.round(box[2] * px2 * 100) / 100) + "px";
+      svg.style.height = (Math.round(box[3] * px2 * 100) / 100) + "px";
+      svg.style.left = (Math.round(-bb.x * px2 * 100) / 100) + "px";
+      svg.style.top = (Math.round(-bb.y * px2 * 100) / 100) + "px";
+      rig.pxPerUnit = px2;
+      rig.laidH = farmH;
+      return true;
+    }
+
+    // Same pivots, ranges, paint order, and ground line as cow-rig.json.
+    var cowRigConfig = {
+      file: "cow.svg",
+      viewBox: [0, 0, 600, 480],
+      groundLineY: 446,
+      facing: "right",
+      sheetFit: { top: 0, foot: 1 },
+      paintOrder: ["leg-back-far", "leg-front-far", "tail", "body", "leg-back-near", "leg-front-near", "head"],
+      parts: [
+        { id: "leg-back-far", pivot: [222, 266], range: [-25, 25] },
+        { id: "leg-front-far", pivot: [364, 278], range: [-25, 25] },
+        { id: "tail", pivot: [146, 200], range: [-30, 30] },
+        { id: "body", pivot: [290, 262], range: [-4, 4] },
+        { id: "leg-back-near", pivot: [190, 266], range: [-25, 25] },
+        { id: "leg-front-near", pivot: [398, 280], range: [-25, 25] },
+        { id: "head", pivot: [430, 205], range: [-20, 20] }
+      ]
+    };
+
+    var COW_STRIDE = 208;
+    var COW_REACH = COW_STRIDE / 4;
+    var COW_LIFT = 32;
+    var cowPartById = {};
+    cowRigConfig.parts.forEach(function (part) { cowPartById[part.id] = part; });
+
+    function cowLeg(id, mode, s) {
+      var part = cowPartById[id];
+      var L = cowRigConfig.groundLineY - part.pivot[1];
+      if (L < 1) L = 1;
+      var limit = Math.min(Math.abs(part.range[0]), Math.abs(part.range[1])) * Math.PI / 180;
+      var amp = COW_REACH / L;
+      var cap = Math.sin(limit);
+      if (amp > cap) amp = cap;
+      var sinT = mode === "stance" ? amp * (2 * s - 1) : amp * (1 - 2 * s);
+      if (sinT > 1) sinT = 1;
+      if (sinT < -1) sinT = -1;
+      var theta = Math.asin(sinT);
+      return {
+        rotate: theta * 180 / Math.PI,
+        y: mode === "swing" ? -COW_LIFT * Math.sin(Math.PI * s) : 0,
+        lift: L * (1 - Math.cos(theta))
+      };
+    }
+
+    function defineCowCycles(rig) {
+      var pairA = ["leg-front-near", "leg-back-far"];
+      var pairB = ["leg-front-far", "leg-back-near"];
+      rig.definePose("stand", { root: { scaleX: 1, scaleY: 1, y: 0 }, parts: {} });
+      rig.defineCycle("walk", {
+        stride: COW_STRIDE,
+        sample: function (phase, ctx) {
+          var s = phase < 0.5 ? phase / 0.5 : (phase - 0.5) / 0.5;
+          var modeA = phase < 0.5 ? "stance" : "swing";
+          var modeB = phase < 0.5 ? "swing" : "stance";
+          var pose = { root: {}, parts: {} };
+          var drop = 0;
+          function put(ids, mode) {
+            for (var i = 0; i < ids.length; i++) {
+              var leg = cowLeg(ids[i], mode, s);
+              pose.parts[ids[i]] = { rotate: leg.rotate, y: leg.y };
+              if (mode === "stance" && leg.lift > drop) drop = leg.lift;
+            }
+          }
+          put(pairA, modeA);
+          put(pairB, modeB);
+          var step = Math.sin(phase * Math.PI * 4);
+          pose.parts.body = { rotate: 1.4 * step };
+          pose.parts.head = { rotate: 5.5 * Math.sin(phase * Math.PI * 4 - 0.6) };
+          pose.parts.tail = { rotate: 5 + 11 * Math.sin(phase * Math.PI * 2) };
+          pose.root = { y: drop, scaleX: ctx.face || 1, scaleY: 1 };
+          return pose;
+        }
+      });
+      rig.defineCycle("idle", {
+        duration: 6.4,
+        sample: function (phase, ctx) {
+          var breathe = Math.sin(phase * Math.PI * 4);
+          var tail = 3 * Math.sin(phase * Math.PI * 2);
+          if (phase > 0.18 && phase < 0.42) {
+            tail += 18 * Math.sin((phase - 0.18) / 0.24 * Math.PI);
+          }
+          var head = 0.8 * Math.sin(phase * Math.PI * 4);
+          if (phase > 0.55 && phase < 0.9) {
+            head += 14 * Math.sin((phase - 0.55) / 0.35 * Math.PI * 2);
+          }
+          return {
+            root: { y: 0, scaleX: ctx.face || 1, scaleY: 1 },
+            parts: {
+              body: { rotate: 0.6 * breathe, scaleY: 1 + 0.012 * breathe },
+              tail: { rotate: tail },
+              head: { rotate: head }
+            }
+          };
+        }
+      });
+      rig.defineCycle("turn", {
+        duration: 0.2,
+        once: true,
+        sample: function (phase, ctx) {
+          var tuck = Math.sin(smoothstep(phase) * Math.PI);
+          return {
+            root: {
+              y: 0,
+              scaleX: turnScaleX(ctx.turnFrom || 1, phase),
+              scaleY: 1 + 0.06 * tuck
+            },
+            parts: {
+              head: { rotate: -6 * tuck },
+              tail: { rotate: 10 * (1 - smoothstep(phase)) }
+            }
+          };
+        }
+      });
+    }
+
+    function smoothstep(t) {
+      if (t < 0) t = 0;
+      if (t > 1) t = 1;
+      return t * t * (3 - 2 * t);
+    }
+
+    function partById(config, id) {
+      var parts = config.parts || [];
+      for (var i = 0; i < parts.length; i++) {
+        if (parts[i].id === id) return parts[i];
+      }
+      return null;
+    }
+
+    function legReach(config, fraction) {
+      var reach = Infinity;
+      config.parts.forEach(function (part) {
+        if (part.id.indexOf("leg-") !== 0) return;
+        var L = config.groundLineY - part.pivot[1];
+        if (L < 8) return;
+        var lim = Math.min(Math.abs(part.range[0]), Math.abs(part.range[1]));
+        var r = L * Math.sin(lim * Math.PI / 180) * fraction;
+        if (r < reach) reach = r;
+      });
+      if (!isFinite(reach) || reach < 4) reach = 18;
+      return reach;
+    }
+
+    function swingLeg(part, groundY, reach, liftPx, mode, s) {
+      var L = groundY - part.pivot[1];
+      if (L < 1) L = 1;
+      var limit = Math.min(Math.abs(part.range[0]), Math.abs(part.range[1])) * Math.PI / 180;
+      var amp = reach / L;
+      var cap = Math.sin(limit * 0.98);
+      if (cap < 0) cap = 0;
+      if (amp > cap) amp = cap;
+      var sinT = mode === "stance" ? amp * (2 * s - 1) : amp * (1 - 2 * s);
+      if (sinT > 1) sinT = 1;
+      if (sinT < -1) sinT = -1;
+      var theta = Math.asin(sinT);
+      return {
+        rotate: theta * 180 / Math.PI,
+        y: mode === "swing" ? -liftPx * Math.sin(Math.PI * s) : 0,
+        lift: L * (1 - Math.cos(theta))
+      };
+    }
+
+    function gaitPose(config, reach, liftPx, phase, face) {
+      var pairs = config.legPairs;
+      var s = phase < 0.5 ? phase / 0.5 : (phase - 0.5) / 0.5;
+      var modeA = phase < 0.5 ? "stance" : "swing";
+      var modeB = phase < 0.5 ? "swing" : "stance";
+      var pose = { root: {}, parts: {} };
+      var drop = 0;
+      function put(ids, mode) {
+        if (!ids) return;
+        for (var i = 0; i < ids.length; i++) {
+          var part = partById(config, ids[i]);
+          if (!part) continue;
+          var leg = swingLeg(part, config.groundLineY, reach, liftPx, mode, s);
+          pose.parts[ids[i]] = { rotate: leg.rotate, y: leg.y };
+          if (mode === "stance" && leg.lift > drop) drop = leg.lift;
+        }
+      }
+      put(pairs[0], modeA);
+      put(pairs[1], modeB);
+      var step = Math.sin(phase * Math.PI * 4);
+      if (partById(config, "body")) pose.parts.body = { rotate: 1.15 * step };
+      if (partById(config, "neck")) pose.parts.neck = { rotate: 4 * Math.sin(phase * Math.PI * 2) };
+      if (partById(config, "head")) {
+        var headAmp = config.kind === "goat" ? 6 : (config.kind === "chicken" ? 5 : 4.5);
+        pose.parts.head = { rotate: headAmp * Math.sin(phase * Math.PI * 4 - 0.5) };
+      }
+      if (partById(config, "tail")) pose.parts.tail = { rotate: 6 * Math.sin(phase * Math.PI * 2) };
+      if (partById(config, "jaw")) pose.parts.jaw = { rotate: 0 };
+      if (partById(config, "rear")) pose.parts.rear = { rotate: 0 };
+      pose.root = { y: drop, scaleX: face || 1, scaleY: 1 };
+      return pose;
+    }
+
+    function idlePose(config, phase, face) {
+      if (config.kind === "bird") {
+        return { root: { y: 0, scaleX: face || 1, scaleY: 1 }, parts: {} };
+      }
+      var breathe = Math.sin(phase * Math.PI * 4);
+      var parts = {};
+      if (partById(config, "body")) parts.body = { rotate: 0.45 * breathe, scaleY: 1 + 0.01 * breathe };
+      if (partById(config, "tail")) {
+        var tail = 3 * Math.sin(phase * Math.PI * 2);
+        if ((config.kind === "dog" || config.kind === "horse") && phase > 0.18 && phase < 0.46) {
+          tail += 12 * Math.sin((phase - 0.18) / 0.28 * Math.PI);
+        }
+        parts.tail = { rotate: tail };
+      }
+      if (partById(config, "head")) {
+        var head = 0.7 * Math.sin(phase * Math.PI * 4);
+        if (phase > 0.55 && phase < 0.88) head += 7 * Math.sin((phase - 0.55) / 0.33 * Math.PI);
+        if (config.kind === "goat") {
+          if (head > 12) head = 12;
+          if (head < -12) head = -12;
+        }
+        parts.head = { rotate: head };
+      }
+      if (partById(config, "neck")) parts.neck = { rotate: 2 * breathe };
+      return { root: { y: 0, scaleX: face || 1, scaleY: 1 }, parts: parts };
+    }
+
+    function turnScaleX(from, phase) {
+      var e = smoothstep(phase);
+      var mag = 1 - 0.4 * Math.sin(e * Math.PI);
+      if (mag < 0.6) mag = 0.6;
+      var sign = from < 0 ? -1 : 1;
+      if (e >= 0.5) sign = -sign;
+      return sign * mag;
+    }
+
+    function turnPose(config, phase, ctx) {
+      var e = smoothstep(phase);
+      var tuck = Math.sin(e * Math.PI);
+      var parts = {};
+      if (partById(config, "head") && config.kind !== "bird") parts.head = { rotate: -6 * tuck };
+      if (partById(config, "tail")) parts.tail = { rotate: 8 * (1 - e) };
+      return {
+        root: { y: 0, scaleX: turnScaleX(ctx.turnFrom || 1, phase), scaleY: 1 + 0.06 * tuck },
+        parts: parts
+      };
+    }
+
+    function wingMix(phase, down, up) {
+      var u = (Math.sin(phase * Math.PI * 2) + 1) / 2;
+      return down + (up - down) * u;
+    }
+
+    function faceRoot(ctx, y) {
+      return { y: y || 0, scaleX: ctx.face || 1, scaleY: 1 };
+    }
+
+    function gallopPose(config, phase, face) {
+      var lead = { "leg-back-far": 0, "leg-back-near": 0.15, "leg-front-far": 0.5, "leg-front-near": 0.66 };
+      var pose = { root: {}, parts: {} };
+      Object.keys(lead).forEach(function (id) {
+        var part = partById(config, id);
+        if (!part) return;
+        var t = (phase + lead[id]) % 1;
+        var fwd = Math.max(part.range[0], -24);
+        var back = Math.min(part.range[1], id.indexOf("front") >= 0 ? 36 : 24);
+        var ang;
+        var lift = 0;
+        if (t < 0.36) {
+          ang = back + (fwd - back) * (t / 0.36);
+        } else {
+          var s = (t - 0.36) / 0.64;
+          ang = fwd + (back - fwd) * s;
+          lift = -Math.sin(s * Math.PI) * 16;
+        }
+        pose.parts[id] = { rotate: ang, y: lift };
+      });
+      var rock = Math.sin(phase * Math.PI * 2);
+      if (partById(config, "body")) pose.parts.body = { rotate: 3.4 * rock };
+      if (partById(config, "head")) pose.parts.head = { rotate: -7 * rock };
+      if (partById(config, "tail")) pose.parts.tail = { rotate: 16 * Math.sin(phase * Math.PI * 2 + 0.5) };
+      if (partById(config, "rear")) pose.parts.rear = { rotate: 0 };
+      pose.root = { y: 0, scaleX: face || 1, scaleY: 1 };
+      return pose;
+    }
+
+    function defineStandardCycles(rig) {
+      var config = rig.config;
+      var reach = legReach(config, 0.74);
+      var lift = Math.max(5, reach * 0.62);
+      rig.defineCycle("walk", {
+        stride: reach * 4,
+        sample: function (phase, ctx) {
+          return gaitPose(config, reach, lift, phase, ctx.face || 1);
+        }
+      });
+      rig.defineCycle("idle", {
+        duration: 6.2,
+        sample: function (phase, ctx) {
+          return idlePose(config, phase, ctx.face || 1);
+        }
+      });
+      rig.defineCycle("turn", {
+        duration: 0.2,
+        once: true,
+        sample: function (phase, ctx) {
+          return turnPose(config, phase, ctx);
+        }
+      });
+      if (config.kind === "horse") {
+        rig.defineCycle("gallop", {
+          duration: 0.36,
+          sample: function (phase, ctx) {
+            return gallopPose(config, phase, ctx.face || 1);
+          }
+        });
+        rig.defineCycle("rear", {
+          duration: 1.75,
+          once: true,
+          sample: function (phase, ctx) {
+            var pose = config.rearPose || {};
+            var riseEnd = 0.26;
+            var u = phase < riseEnd ? smoothstep(phase / riseEnd) : 1;
+            var parts = {};
+            Object.keys(pose).forEach(function (id) {
+              if (id === "leg-front-near" || id === "leg-front-far") return;
+              parts[id] = { rotate: pose[id] * u };
+            });
+            var kickT = phase <= riseEnd ? 0 : (phase - riseEnd) / (1 - riseEnd);
+            var wave = Math.sin(kickT * Math.PI * 4);
+            var nearBase = pose["leg-front-near"] == null ? 55 : pose["leg-front-near"];
+            var farBase = pose["leg-front-far"] == null ? 35 : pose["leg-front-far"];
+            var nearTravel = 52;
+            var farTravel = 48;
+            parts["leg-front-near"] = { rotate: nearBase * u - Math.max(0, wave) * nearTravel * u };
+            parts["leg-front-far"] = { rotate: farBase * u - Math.max(0, -wave) * farTravel * u };
+            return { root: faceRoot(ctx, 0), parts: parts };
+          }
+        });
+      }
+      if (config.kind === "chicken") {
+        rig.defineCycle("peck", {
+          duration: 3.42,
+          once: true,
+          sample: function (phase, ctx) {
+            var n = config.peckN || 3;
+            var local = (phase * n) % 1;
+            var down;
+            if (local < 0.38) down = smoothstep(local / 0.38);
+            else if (local < 0.55) down = 1;
+            else down = 1 - smoothstep((local - 0.55) / 0.45);
+            var peck = config.peckPose || { body: 30, head: 66 };
+            return {
+              root: faceRoot(ctx, 0),
+              parts: {
+                body: { rotate: (peck.body || 30) * down },
+                head: { rotate: (peck.head || 66) * down }
+              }
+            };
+          }
+        });
+      }
+      if (config.kind === "goat") {
+        rig.defineCycle("eat", {
+          duration: 3,
+          once: true,
+          sample: function (phase, ctx) {
+            var nib = config.nibble || { neck: 101, head: -58 };
+            var intro = 0.22;
+            var u = phase < intro ? smoothstep(phase / intro) : 1;
+            var chew = phase > intro ? Math.sin((phase - intro) * Math.PI * 2 * 4.5) * 4 : 0;
+            return {
+              root: faceRoot(ctx, 0),
+              parts: {
+                neck: { rotate: nib.neck * u },
+                head: { rotate: nib.head * u + chew }
+              }
+            };
+          }
+        });
+      }
+      if (config.kind === "dog") {
+        var runReach = legReach(config, 0.94);
+        var runLift = Math.max(5, runReach * 0.7);
+        rig.defineCycle("run", {
+          stride: runReach * 4,
+          sample: function (phase, ctx) {
+            var pose = gaitPose(config, runReach, runLift, phase, ctx.face || 1);
+            if (pose.parts.body) pose.parts.body.rotate *= 1.25;
+            if (pose.parts.tail) pose.parts.tail.rotate = 16 * Math.sin(phase * Math.PI * 2);
+            return pose;
+          }
+        });
+        rig.defineCycle("bark", {
+          duration: 0.85,
+          once: true,
+          sample: function (phase, ctx) {
+            var open = Math.sin(phase * Math.PI);
+            var deg = config.barkOpen || 28;
+            return {
+              root: faceRoot(ctx, 0),
+              parts: {
+                jaw: { rotate: deg * open },
+                head: { rotate: -8 * open }
+              }
+            };
+          }
+        });
+        rig.defineCycle("look", {
+          duration: 1,
+          once: true,
+          sample: function (phase, ctx) {
+            var u = smoothstep(Math.min(1, phase / 0.4));
+            return {
+              root: faceRoot(ctx, 0),
+              parts: {
+                head: { rotate: -20 * u }
+              }
+            };
+          }
+        });
+      }
+      if (config.kind === "duck") {
+        rig.defineCycle("fly", {
+          duration: 1 / 6,
+          sample: function (phase, ctx) {
+            var up = config.wingsUp;
+            var down = config.wingsDown;
+            return {
+              root: faceRoot(ctx, -18),
+              parts: {
+                "wing-near": { rotate: wingMix(phase, down["wing-near"], up["wing-near"]) },
+                "wing-far": { rotate: wingMix(phase, down["wing-far"], up["wing-far"]) },
+                body: { rotate: up.body },
+                "leg-near": { rotate: up["leg-near"] },
+                "leg-far": { rotate: up["leg-far"] }
+              }
+            };
+          }
+        });
+        rig.defineCycle("swim", {
+          duration: 2.6,
+          sample: function (phase, ctx) {
+            var bob = Math.sin(phase * Math.PI * 2) * 4;
+            var drop = config.groundLineY - (config.waterlineY || 238);
+            return {
+              root: faceRoot(ctx, drop),
+              parts: {
+                body: { y: bob, rotate: 1.2 * Math.sin(phase * Math.PI * 4) },
+                head: { rotate: 5 * Math.sin(phase * Math.PI * 2 + 0.6) },
+                tail: { rotate: 10 * Math.sin(phase * Math.PI * 2) }
+              }
+            };
+          }
+        });
+      }
+      if (config.kind === "bird") {
+        rig.defineCycle("fly", {
+          duration: 1 / 9,
+          sample: function (phase, ctx) {
+            var up = config.wingsUp;
+            var down = config.wingsDown;
+            return {
+              root: faceRoot(ctx, -8),
+              parts: {
+                "wing-near": { rotate: wingMix(phase, down["wing-near"], up["wing-near"]) },
+                "wing-far": { rotate: wingMix(phase, down["wing-far"], up["wing-far"]) },
+                body: { rotate: up.body },
+                "leg-near": { rotate: up["leg-near"] },
+                "leg-far": { rotate: up["leg-far"] }
+              }
+            };
+          }
+        });
+      }
+    }
+
+    function cowForwardVb(animal, sw) {
+      var rig = animal.rig;
+      if (!rig || !rig.pxPerUnit || !sw) return 0;
+      var ox = animal.ox == null ? animal.x : animal.ox;
+      var dxPx = (animal.x - ox) / 100 * sw;
+      var facing = animal.facing < 0 ? -1 : 1;
+      var forward = dxPx * facing;
+      if (forward < 0) forward = 0;
+      return forward / rig.pxPerUnit;
+    }
+
+    function actingCycle(animal) {
+      var action = animal.action || "walk";
+      if (action === "gallop" || action === "run" || action === "fly" || action === "swim" || action === "peck" || action === "rear" || action === "eat" || action === "bark" || action === "look") return action;
+      return animal.moving ? "walk" : "idle";
+    }
+
+    function holdFacing(action) {
+      return action === "rear" || action === "eat" || action === "peck" || action === "bark";
+    }
+
+    function driveRig(animal, dt, sw) {
+      var rig = animal.rig;
+      if (!rig || !rig.ready) return;
+      layoutRig(rig, animal.el);
+      if (animal.kind === "dog" && rig.cycles.bark) rig.cycles.bark.duration = dogBarkDur();
+      if (animal.kind === "chicken" && animal.action === "peck" && rig.cycles.peck) {
+        rig.cycles.peck.duration = animal.phaseLen || 3.42;
+      }
+      var want = animal.facing < 0 ? -1 : 1;
+      var next = actingCycle(animal);
+      if (rig.mode !== "turn" && want !== rig.face && !holdFacing(next)) {
+        rig.turnFrom = rig.face;
+        rig.turnTo = want;
+        rig.play("turn", { blend: 0.06, restart: true });
+      } else if (rig.mode !== "turn") {
+        if (rig.mode !== next) {
+          var restart = next === "rear" || next === "peck" || next === "eat" || next === "bark" || next === "look";
+          rig.play(next, { blend: restart ? 0.08 : 0.1, restart: restart });
+        }
+      }
+      var stepped = cowForwardVb(animal, sw);
+      if (animal.kind === "dog" && animal.phase === "chase" && animal.action === "run") {
+        var stride = (rig.cycles.run && rig.cycles.run.stride) || 80;
+        var paced = stride * Math.min(dt, 0.05) * 3.6;
+        if (stepped < paced) stepped = paced;
+      }
+      if (animal.kind === "horse" && rig.cycles.rear) rig.cycles.rear.duration = 1.75;
+      rig.step(dt, {
+        distance: stepped,
+        face: rig.face,
+        turnFrom: rig.turnFrom,
+        moving: !!animal.moving
+      });
+      if (rig.mode === "turn" && rig.phase >= 1) {
+        rig.face = rig.turnTo;
+        rig.play(actingCycle(animal), { blend: 0.12 });
+      }
+      if (animal.kind === "duck") {
+        var swimming = animal.action === "swim";
+        rig.setShown("swim", swimming);
+        rig.setShown("leg-near", !swimming);
+        rig.setShown("leg-far", !swimming);
+      }
+    }
+
+    function driveBird(bird, dt) {
+      var rig = bird.rig;
+      if (!rig || !rig.ready) return;
+      layoutRig(rig, bird.el);
+      var want = bird.facing < 0 ? -1 : 1;
+      var next = bird.flying ? "fly" : "idle";
+      if (rig.mode !== "turn" && want !== rig.face) {
+        rig.turnFrom = rig.face;
+        rig.turnTo = want;
+        rig.play("turn", { blend: 0.05, restart: true });
+      } else if (rig.mode !== "turn" && rig.mode !== next) {
+        rig.play(next, { blend: 0.1 });
+      }
+      rig.step(dt, { distance: 0, face: rig.face, turnFrom: rig.turnFrom, moving: false });
+      if (rig.mode === "turn" && rig.phase >= 1) {
+        rig.face = rig.turnTo;
+        rig.play(bird.flying ? "fly" : "idle", { blend: 0.1 });
+      }
+    }
+
+    function frameTop(animal) {
+      var rigSpot = rigHeadSpot(animal);
+      if (rigSpot) return rigSpot;
+      return [0.62, 0.16];
+    }
+
+    function animalSpanPx(animal) {
+      var rig = animal.rig;
+      var sh = farm.clientHeight || 1;
+      if (rig && rig.bbox && rig.pxPerUnit && rig.config) {
+        var vis = rig.config.groundLineY - rig.bbox.y;
+        if (vis > 1) return vis * rig.pxPerUnit;
+      }
+      var h = animal.el.offsetHeight;
+      if (h > 2) return h;
+      return sh * ((tall[animal.kind] || 6) / 100);
+    }
+
+    function sceneryTopPx(animal, sh) {
+      if (animal.kind !== "sheep" && animal.kind !== "goat") return null;
+      var host = animal.kind === "sheep" ? penCover : farmSvgEl;
+      if (!host) return null;
+      var root = animal.kind === "sheep" ? host.querySelector("svg") : host.querySelector("#farm-hedge");
+      if (!root) return null;
+      var shapes = root.querySelectorAll("path, ellipse");
+      if (!shapes.length) return null;
+      var svg = String(root.tagName).toLowerCase() === "svg" ? root : (root.ownerSVGElement || farmSvgEl);
+      if (!svg || !svg.createSVGPoint) return null;
+      var pt = svg.createSVGPoint();
+      pt.x = animal.x / 100 * 1280;
+      var y0 = animal.kind === "goat" ? 300 : 320;
+      var y1 = animal.kind === "goat" ? 500 : 400;
+      var top = null;
+      for (var y = y0; y <= y1; y += 2) {
+        pt.y = y;
+        for (var i = 0; i < shapes.length; i++) {
+          var shape = shapes[i];
+          if (!shape.isPointInFill) continue;
+          var hit = false;
+          try { hit = shape.isPointInFill(pt); } catch (e) { hit = false; }
+          if (hit) { top = y; break; }
+        }
+        if (top != null) break;
+      }
+      if (top == null) return null;
+      return sh * (top / 720);
+    }
+
+    function placeMarker(now) {
+      var animal = herd[index];
+      var picked = animal.el;
+      var spot = frameTop(animal);
+      var fx = spot[0];
+      if (animal.clip.classList.contains("back")) fx = 1 - fx;
+      var tipX = picked.offsetLeft + fx * picked.offsetWidth;
+      var tipY = picked.offsetTop + spot[1] * picked.offsetHeight;
+      var sh = farm.clientHeight || picked.offsetHeight || 1;
+      var span = animalSpanPx(animal);
+      var minH = sh * 0.065;
+      var minW = sh * 0.047;
+      var markerH = Math.max(minH, span * 0.82);
+      var markerW = markerH * (minW / minH);
+      marker.style.width = (Math.round(markerW * 100) / 100) + "px";
+      marker.style.height = (Math.round(markerH * 100) / 100) + "px";
+      var tipInset = markerH * 0.12;
+      var gap = Math.max(3, Math.min(span * 0.05, sh * 0.012));
+      var bounce = (0.5 - 0.5 * Math.cos(now / 280)) * Math.max(4, markerH * 0.1);
+      var extra = 0;
+      var cover = sceneryTopPx(animal, sh);
+      if (cover != null) {
+        var bottom = tipY + tipInset - gap - bounce;
+        var need = bottom - (cover - sh * 0.012);
+        if (need > extra) extra = need;
+      }
+      marker.style.left = (tipX - markerW / 2) + "px";
+      marker.style.top = (tipY - markerH + tipInset - gap - extra - bounce) + "px";
+    }
+
+    function tick(now) {
+      requestAnimationFrame(tick);
+      if (!farmOn) return;
+      var sw = farm.clientWidth;
+      var sh = farm.clientHeight;
+      if (sw < 2 || sh < 2) return;
+      if (!lastTick) lastTick = now;
+      var dt = (now - lastTick) / 1000;
+      lastTick = now;
+      if (dt < 0) dt = 0;
+      if (dt > 0.05) dt = 0.05;
+      if (!birdChaseEnabled) {
+        var stray = farm.querySelectorAll(".bird");
+        for (var s = 0; s < stray.length; s++) {
+          if (stray[s].parentNode) stray[s].parentNode.removeChild(stray[s]);
+        }
+      }
+      for (var i = 0; i < herd.length; i++) {
+        measure(herd[i], sw, sh);
+        remember(herd[i]);
+      }
+      for (var j = 0; j < herd.length; j++) think(herd[j], dt, now);
+      separate();
+      for (var k = 0; k < herd.length; k++) {
+        var animal = herd[k];
+        var bob = animal.bob || 0;
+        animal.bob = 0;
+        if (!bodyInScene(animal, animal.x, animal.y)) revert(animal);
+        animal.bob = bob;
+        if (animal.bob && !bodyInScene(animal, animal.x, animal.y)) animal.bob = 0;
+        place(animal, sw, sh, dt);
+        if (animal.birdList) placeBirds(animal, dt, sw, sh);
+      }
+      placeMarker(now);
+    }
+
+    var titleArt = document.getElementById("title-art");
+    var farmArt = document.getElementById("farm-art");
+    var penCover = document.getElementById("pen-cover");
+    var visualsReady = false;
+    var pendingEnter = false;
+    var birdRigConfig = null;
+    var cowAnimal = herd[0];
+    cowAnimal.rig = createRig(cowRigConfig);
+    defineCowCycles(cowAnimal.rig);
+    cowAnimal.rig.face = cowAnimal.facing < 0 ? -1 : 1;
+    cowAnimal.rig.turnFrom = cowAnimal.rig.face;
+    cowAnimal.rig.mode = "idle";
+    cowAnimal.rig.phases.walk = 0.25;
+
+    function configFromRig(data, kind) {
+      var cfg = {
+        kind: kind,
+        file: data.file,
+        viewBox: String(data.viewBox).split(/[\s,]+/).map(Number),
+        groundLineY: data.groundLineY,
+        facing: data.facing || "right",
+        scaleToCowUnits: data.scaleToCowUnits || 1,
+        sizeBoost: kind === "horse" ? 1.22 : 1,
+        matchDog: kind === "chicken" || kind === "duck",
+        paintOrder: data.paintOrderBackToFront.slice(),
+        waterlineY: data.swim ? data.swim.waterlineY : 0,
+        nibble: data.nibble ? data.nibble.pose : null,
+        peckPose: data.peck ? data.peck.pose : null,
+        rearPose: data.rearing ? data.rearing.fullRearPose : null,
+        barkOpen: data.bark ? data.bark.openDeg : 28,
+        wingsUp: (data.fly && data.fly.wingsUp) || (data.flap && data.flap.wingsUp) || null,
+        wingsDown: (data.fly && data.fly.wingsDown) || (data.flap && data.flap.wingsDown) || null,
+        peckN: 3,
+        parts: data.parts.map(function (p) {
+          return {
+            id: p.id,
+            pivot: [p.pivot.x, p.pivot.y],
+            range: p.safeRotationDeg.slice(),
+            parent: p.parent || ""
+          };
+        })
+      };
+      cfg.legPairs = partById(cfg, "leg-front-near")
+        ? [["leg-front-near", "leg-back-far"], ["leg-front-far", "leg-back-near"]]
+        : [["leg-near"], ["leg-far"]];
+      return cfg;
+    }
+
+    function ensureBirdRig(bird) {
+      if (bird.rig || !birdRigConfig) return;
+      bird.rig = createRig(birdRigConfig);
+      defineStandardCycles(bird.rig);
+      bird.rig.face = bird.facing < 0 ? -1 : 1;
+      bird.rig.turnFrom = bird.rig.face;
+      bird.rig.mode = "idle";
+    }
+
+    function loadText(url) {
+      return fetch(url).then(function (res) {
+        if (!res.ok) throw new Error(url);
+        return res.text();
+      });
+    }
+
+    function showArtError() {
+      var note = document.getElementById("load-note");
+      if (note) note.hidden = false;
+    }
+
+    var farmSvgEl = null;
+    var titleSvgEl = null;
+    var groundFill = document.getElementById("ground-fill");
+
+    function mountSceneSvg(text, host, prefix) {
+      var doc = new DOMParser().parseFromString(prefixSvgIds(text, prefix), "image/svg+xml");
+      if (!doc || doc.querySelector("parsererror")) return null;
+      var svg = doc.documentElement;
+      svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+      svg.style.width = "100%";
+      svg.style.height = "100%";
+      svg.style.display = "block";
+      svg.style.overflow = "visible";
+      host.appendChild(svg);
+      return svg;
+    }
+
+    function artBounds(svg) {
+      var scene = svg.closest ? svg.closest(".scene") : null;
+      var restore = scene && scene.hidden;
+      if (restore) scene.hidden = false;
+      var b = svg.getBBox();
+      if (restore) scene.hidden = true;
+      var pad = 10;
+      if (!(b.width > 10) || !(b.height > 10)) return { x: 0, y: 0, w: 1280, h: 720 };
+      return { x: b.x - pad, y: b.y - pad, w: b.width + pad * 2, h: b.height + pad * 2 };
+    }
+
+    function placeScene(scene, svg) {
+      var art = artBounds(svg);
+      var vb = { x: 0, y: 0, w: 1280, h: 720 };
+      var vw = document.documentElement.clientWidth || window.innerWidth;
+      var vh = document.documentElement.clientHeight || window.innerHeight;
+      var aspect = art.w / art.h;
+      var fw = vw;
+      var fh = fw / aspect;
+      if (fh > vh) {
+        fh = vh;
+        fw = fh * aspect;
+      }
+      var left = (vw - fw) / 2;
+      var top = (vh - fh) / 2;
+      var sx = left + (vb.x - art.x) / art.w * fw;
+      var sy = top + (vb.y - art.y) / art.h * fh;
+      var sw = vb.w / art.w * fw;
+      var sh = vb.h / art.h * fh;
+      scene.style.left = sx + "px";
+      scene.style.top = sy + "px";
+      scene.style.width = sw + "px";
+      scene.style.height = sh + "px";
+      scene.style.transform = "none";
+      return { sx: sx, sy: sy, sw: sw, sh: sh };
+    }
+
+    function fitView() {
+      var svg = farmOn ? farmSvgEl : titleSvgEl;
+      var scene = farmOn ? farm : title;
+      if (!svg || !scene) return;
+      var box = placeScene(scene, svg);
+      if (farmSvgEl && titleSvgEl) placeScene(farmOn ? title : farm, farmOn ? titleSvgEl : farmSvgEl);
+      if (!groundFill || !box) return;
+      var horizon = farmOn ? 248 : 426;
+      var colour = farmOn ? "#93c45d" : "#ecc995";
+      groundFill.style.top = (box.sy + (horizon / 720) * box.sh) + "px";
+      groundFill.style.background = colour;
+    }
+
+    function liftPenFront(farmSvg) {
+      if (!farmSvg || !penCover) return;
+      var front = farmSvg.querySelector("#farm-pen-front");
+      if (!front) return;
+      var overlay = document.createElementNS(farmSvg.namespaceURI, "svg");
+      overlay.setAttribute("viewBox", "0 0 1280 720");
+      overlay.setAttribute("preserveAspectRatio", "xMidYMid meet");
+      front.parentNode.removeChild(front);
+      overlay.appendChild(front);
+      penCover.appendChild(overlay);
+    }
+
+    function mountLoaded(texts, rigs) {
+      titleSvgEl = mountSceneSvg(texts["title.svg"], titleArt, "title-");
+      var farmSvg = mountSceneSvg(texts["farm.svg"], farmArt, "farm-");
+      if (!titleSvgEl || !farmSvg) return false;
+      farmSvgEl = farmSvg;
+      liftPenFront(farmSvg);
+      if (!mountRig(cowAnimal.rig, texts["cow.svg"], cowAnimal.clip, "cow1-")) return false;
+      var mounted = true;
+      herd.forEach(function (animal) {
+        if (animal.kind === "cow") return;
+        var cfg = rigs[animal.kind];
+        animal.rig = createRig(cfg);
+        defineStandardCycles(animal.rig);
+        animal.rig.face = animal.facing < 0 ? -1 : 1;
+        animal.rig.turnFrom = animal.rig.face;
+        animal.rig.mode = "idle";
+        if (!mountRig(animal.rig, texts[animal.kind + ".svg"], animal.clip, animal.kind + "1-")) {
+          mounted = false;
+          return;
+        }
+        showAnimal(animal);
+      });
+      var dog = null;
+      herd.forEach(function (animal) { if (animal.kind === "dog") dog = animal; });
+      if (dog && dog.birdList && rigs.bird) {
+        birdRigConfig = rigs.bird;
+        for (var i = 0; i < dog.birdList.length; i++) {
+          var bird = dog.birdList[i];
+          ensureBirdRig(bird);
+          if (!mountRig(bird.rig, texts["bird.svg"], bird.el, "bird" + (i + 1) + "-")) mounted = false;
+        }
+      }
+      if (!mounted) return false;
+      showAnimal(cowAnimal);
+      fitView();
+      return true;
+    }
+
+    function revealFarm() {
+      if (farmOn) return;
+      farmOn = true;
+      title.hidden = true;
+      farm.hidden = false;
+      fitView();
+      startAudio();
+      herd.forEach(function (animal) { showAnimal(animal); });
+      if (!walking) {
+        walking = true;
+        requestAnimationFrame(tick);
+      }
+    }
+
+    var visualNames = ["sheep", "goat", "horse", "chicken", "dog", "duck", "bird"];
+    var textJobs = ["title.svg", "farm.svg", "cow.svg"].concat(visualNames.map(function (name) {
+      return name + ".svg";
+    })).concat(visualNames.map(function (name) {
+      return name + "-rig.json";
+    })).map(function (file) {
+      return loadText(file).then(function (text) { return { file: file, text: text }; });
+    });
+    Promise.all(textJobs).then(function (rows) {
+      var texts = {};
+      rows.forEach(function (row) { texts[row.file] = row.text; });
+      var rigs = {};
+      visualNames.forEach(function (name) {
+        rigs[name] = configFromRig(JSON.parse(texts[name + "-rig.json"]), name);
+      });
+      if (!mountLoaded(texts, rigs)) {
+        showArtError();
+        return;
+      }
+      visualsReady = true;
+      if (pendingEnter) revealFarm();
+    }).catch(function () {
+      showArtError();
+    });
+
+    herd.forEach(function (animal) {
+      showAnimal(animal);
+      animal.el.style.left = (animal.x - animal.w / 2) + "%";
+      animal.el.style.top = (animal.y - animal.h) + "%";
+      animal.el.style.zIndex = String(10 + Math.round(animal.y));
+    });
+
+    function playTitle() {
+      if (farmOn || !titleMusic.paused) return;
+      var started = titleMusic.play();
+      if (started && started.then) {
+        started.then(function () {
+          if (farmOn) stopTitle();
+        }, function () {});
+      }
+    }
+
+    function stopTitle() {
+      titleMusic.pause();
+      try { titleMusic.currentTime = 0; } catch (e) {}
+    }
+
+    function startAudio() {
+      if (!farmOn) return;
+      stopTitle();
+      music.volume = 0.18;
+      ambient.forEach(function (el) {
+        if (!el.paused) return;
+        var begun = el.play();
+        if (begun && begun.catch) begun.catch(function () {});
+      });
+      if (musicOn || !music.paused) {
+        musicOn = true;
+        return;
+      }
+      var started = music.play();
+      if (started && started.then) {
+        started.then(function () {
+          if (!farmOn) {
+            music.pause();
+            musicOn = false;
+            return;
+          }
+          musicOn = true;
+        }, function () {});
+      } else if (farmOn) {
+        musicOn = true;
+      }
+    }
+
+    window.addEventListener("resize", fitView);
+    playTitle();
+
+    function closeCard() {
+      card.hidden = true;
+    }
+
+    function openCard() {
+      var animal = herd[index];
+      cardStill.src = animal.still;
+      cardName.textContent = animal.name;
+      cardLine.textContent = animal.line;
+      card.hidden = false;
+    }
+
+    function playSelected() {
+      var takeoff = document.getElementById("takeoff");
+      if (takeoff && !takeoff.paused) takeoff.pause();
+      var animal = herd[index];
+      document.querySelectorAll("audio.voice").forEach(function (clip) {
+        clip.pause();
+        clip.currentTime = 0;
+      });
+      var clip = document.getElementById("clip-" + animal.sound.replace(".mp3", ""));
+      if (clip) {
+        clip.volume = 1;
+        var started = clip.play();
+        if (started && started.catch) started.catch(function () {});
+      }
+    }
+
+    function stepHerd(dir) {
+      var pos = 0;
+      for (var i = 0; i < leftToRight.length; i++) {
+        if (leftToRight[i] === index) pos = i;
+      }
+      var next = pos + dir;
+      if (next < 0 || next >= leftToRight.length) return;
+      index = leftToRight[next];
+    }
+
+    function plainEnter(event) {
+      return event.key === "Enter" && !event.repeat && !event.shiftKey && !event.altKey && !event.ctrlKey && !event.metaKey;
+    }
+
+    document.addEventListener("keyup", function (event) {
+      if (event.key === " " || event.code === "Space") spaceHeld = false;
+    });
+    window.addEventListener("blur", function () {
+      spaceHeld = false;
+    });
+
+    function titlePointer(event) {
+      if (farmOn) return;
+      event.preventDefault();
+    }
+    ["click", "pointerdown", "pointerup", "mousedown", "mouseup", "touchstart", "contextmenu"].forEach(function (type) {
+      document.addEventListener(type, titlePointer);
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (!farmOn) {
+        if (!plainEnter(event)) {
+          var keyName = event.key || "";
+          if (keyName === " " || event.code === "Space" || keyName.indexOf("Arrow") === 0) event.preventDefault();
+          playTitle();
+          return;
+        }
+        event.preventDefault();
+        if (!visualsReady) {
+          pendingEnter = true;
+          return;
+        }
+        revealFarm();
+        return;
+      }
+      var up = event.key === "ArrowUp";
+      var down = event.key === "ArrowDown";
+      if (up || down) return;
+      var left = event.key === "ArrowLeft";
+      var right = event.key === "ArrowRight";
+      var space = event.key === " " || event.code === "Space";
+      if (!left && !right && !space) return;
+      event.preventDefault();
+      if (space && (event.repeat || spaceHeld)) return;
+      if (space) spaceHeld = true;
+      startAudio();
+      if (left || right) {
+        if (!card.hidden) closeCard();
+        stepHerd(right ? 1 : -1);
+        return;
+      }
+      var nowMs = Date.now();
+      if (!card.hidden) {
+        if (nowMs < cardLock) return;
+        closeCard();
+        return;
+      }
+      playSelected();
+      openCard();
+      cardLock = nowMs + 500;
+    });
+</script>
+</body>
+</html>

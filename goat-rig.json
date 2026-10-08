@@ -1,0 +1,129 @@
+{
+  "file": "goat.svg",
+  "viewBox": "0 0 540 460",
+  "groundLineY": 426,
+  "facing": "right",
+  "paintOrderBackToFront": [
+    "leg-back-far",
+    "leg-front-far",
+    "tail",
+    "leg-back-near",
+    "leg-front-near",
+    "neck",
+    "head",
+    "body"
+  ],
+  "rotationSign": "CSS rotate(); positive = clockwise on screen",
+  "nibble": {
+    "pose": {
+      "neck": 101,
+      "head": -58
+    },
+    "mouthAt": {
+      "x": 488,
+      "y": 424
+    },
+    "howTo": "Rotate #neck +101 (swings the neck forward and down from the chest) and #head -58 (nested in #neck, keeps the face pointing down and forward). The mouth then touches the ground line (y 426) at about x 488, in front of the front hooves. Ease both from 0 together; chew with small #head wobbles of +-4 around -58."
+  },
+  "scaleToCowUnits": 0.705,
+  "heightRelativeToCow": 0.8,
+  "parts": [
+    {
+      "id": "leg-back-far",
+      "pivot": {
+        "x": 196,
+        "y": 262
+      },
+      "description": "Far hind leg (darker); pivot at the hip, top hidden under the body (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "leg-front-far",
+      "pivot": {
+        "x": 322,
+        "y": 266
+      },
+      "description": "Far front leg (darker); pivot at the shoulder (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "tail",
+      "pivot": {
+        "x": 128,
+        "y": 204
+      },
+      "description": "Short upturned tail; pivot at the root (+ tips forward over the rump, - tips back/down).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "leg-back-near",
+      "pivot": {
+        "x": 164,
+        "y": 266
+      },
+      "description": "Near hind leg; pivot at the hip (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "leg-front-near",
+      "pivot": {
+        "x": 352,
+        "y": 270
+      },
+      "description": "Near front leg; pivot at the shoulder (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "neck",
+      "pivot": {
+        "x": 354,
+        "y": 262
+      },
+      "description": "Neck (contains 'head'); pivot low in the chest, base hidden behind the body. + swings the neck forward and down (to graze), - raises it. Above about +60 also turn the head negative or the face goes into the ground (nibble = neck +101, head -58).",
+      "safeRotationDeg": [
+        -15,
+        105
+      ]
+    },
+    {
+      "id": "head",
+      "pivot": {
+        "x": 400,
+        "y": 146
+      },
+      "description": "Head with horns, ear, eye, beard; nested inside 'neck', pivot at the poll (top of the neck). + tips the nose down, - lifts it. On its own keep it within -25..+25; the big negative values are only for the nibble (paired with neck > +60).",
+      "safeRotationDeg": [
+        -65,
+        25
+      ],
+      "parent": "neck"
+    },
+    {
+      "id": "body",
+      "pivot": {
+        "x": 250,
+        "y": 250
+      },
+      "description": "Torso; covers the leg tops and the neck base. Pivot near the centre for a gentle sway.",
+      "safeRotationDeg": [
+        -4,
+        4
+      ]
+    }
+  ]
+}

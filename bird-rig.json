@@ -1,0 +1,125 @@
+{
+  "file": "bird.svg",
+  "viewBox": "0 0 190 160",
+  "groundLineY": 142,
+  "facing": "right",
+  "paintOrderBackToFront": [
+    "leg-far",
+    "leg-near",
+    "body",
+    "wing-far",
+    "tail",
+    "head",
+    "wing-near"
+  ],
+  "rotationSign": "CSS rotate(); positive = clockwise on screen",
+  "flap": {
+    "wingsUp": {
+      "wing-near": 90,
+      "wing-far": 118,
+      "body": -10,
+      "leg-near": 35,
+      "leg-far": 35
+    },
+    "wingsDown": {
+      "wing-near": -40,
+      "wing-far": -25,
+      "body": -10,
+      "leg-near": 35,
+      "leg-far": 35
+    },
+    "howTo": "Alternate #wing-near between +90 (up) and -40 (down) and #wing-far between +118 and -25, about 8-10 flaps per second. Tilt #body -10 and tuck both legs +35 in flight; all 0 = perched/sitting. Peck: #head +30 with #body +10."
+  },
+  "scaleToCowUnits": 0.85,
+  "heightRelativeToCow": 0.27,
+  "parts": [
+    {
+      "id": "leg-far",
+      "pivot": {
+        "x": 98,
+        "y": 116
+      },
+      "description": "Far leg (darker); pivot at the hip (+ back, - forward). Tuck +35 when flying.",
+      "safeRotationDeg": [
+        -30,
+        40
+      ]
+    },
+    {
+      "id": "leg-near",
+      "pivot": {
+        "x": 88,
+        "y": 118
+      },
+      "description": "Near leg; pivot at the hip (+ back, - forward). Tuck +35 when flying.",
+      "safeRotationDeg": [
+        -30,
+        40
+      ]
+    },
+    {
+      "id": "body",
+      "pivot": {
+        "x": 92,
+        "y": 116
+      },
+      "description": "Round body with peach belly; pivot at the hips over the legs. Contains both wings, the tail and the head (+ tips forward, - leans back; -10 for flight).",
+      "safeRotationDeg": [
+        -20,
+        20
+      ]
+    },
+    {
+      "id": "wing-far",
+      "pivot": {
+        "x": 108,
+        "y": 70
+      },
+      "description": "Far wing (darker), behind the body; nested in 'body', pivot at the shoulder (+ raises, - lowers).",
+      "safeRotationDeg": [
+        -30,
+        125
+      ],
+      "parent": "body"
+    },
+    {
+      "id": "tail",
+      "pivot": {
+        "x": 62,
+        "y": 96
+      },
+      "description": "Fan tail; nested in 'body', pivot at the root (+ flicks up, - tips down).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ],
+      "parent": "body"
+    },
+    {
+      "id": "head",
+      "pivot": {
+        "x": 114,
+        "y": 86
+      },
+      "description": "Head with beak and eye; nested in 'body', neck base hidden behind the body (+ dips to peck, - lifts).",
+      "safeRotationDeg": [
+        -20,
+        35
+      ],
+      "parent": "body"
+    },
+    {
+      "id": "wing-near",
+      "pivot": {
+        "x": 104,
+        "y": 76
+      },
+      "description": "Near wing over the body; nested in 'body', pivot at the shoulder (+ raises, - lowers).",
+      "safeRotationDeg": [
+        -40,
+        100
+      ],
+      "parent": "body"
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "file": "horse.svg",
+  "viewBox": "0 0 660 730",
+  "groundLineY": 694,
+  "facing": "right",
+  "paintOrderBackToFront": [
+    "leg-back-far",
+    "leg-back-near",
+    "rear",
+    "leg-front-far",
+    "tail",
+    "leg-front-near",
+    "head",
+    "body"
+  ],
+  "rotationSign": "CSS rotate(); positive = clockwise on screen",
+  "rearing": {
+    "group": "rear",
+    "pivot": {
+      "x": 226,
+      "y": 462
+    },
+    "howTo": "Rotate #rear by a NEGATIVE angle (counter-clockwise lifts the front). -35 is a full rear, -20 a small hop, keep within -40..0. Body, head, front legs and tail are inside #rear so they move with it; the hind legs stay planted.",
+    "fullRearPose": {
+      "rear": -35,
+      "leg-front-near": 55,
+      "leg-front-far": 35,
+      "head": 12,
+      "tail": 20,
+      "leg-back-near": -8,
+      "leg-back-far": -4
+    },
+    "notes": "For a nicer rear also fold the front legs (+35..+55, they are inside #rear so the angle is relative to the body), tip the head +10 and step the hind legs slightly forward (-4..-8). Hind hooves lift about 1-3 px at -8 deg."
+  },
+  "scaleToCowUnits": 0.814,
+  "heightRelativeToCow": 1.18,
+  "parts": [
+    {
+      "id": "leg-back-far",
+      "pivot": {
+        "x": 244,
+        "y": 458
+      },
+      "description": "Far hind leg (darker); pivot at the hip (+ back, - forward). Stays outside 'rear' so it plants the horse when rearing.",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "leg-back-near",
+      "pivot": {
+        "x": 212,
+        "y": 462
+      },
+      "description": "Near hind leg; pivot at the hip (+ back, - forward). Stays outside 'rear'.",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "rear",
+      "pivot": {
+        "x": 226,
+        "y": 462
+      },
+      "description": "Wrapper around everything except the hind legs, pivoted at the hips. Rotate NEGATIVE (counter-clockwise) to rear up on the hind legs; the body, head, front legs and tail all move with it.",
+      "safeRotationDeg": [
+        -40,
+        0
+      ]
+    },
+    {
+      "id": "leg-front-far",
+      "pivot": {
+        "x": 420,
+        "y": 462
+      },
+      "description": "Far front leg (darker); pivot at the shoulder (+ back/folds under, - reaches forward).",
+      "safeRotationDeg": [
+        -30,
+        60
+      ],
+      "parent": "rear"
+    },
+    {
+      "id": "tail",
+      "pivot": {
+        "x": 170,
+        "y": 416
+      },
+      "description": "Flowing dark tail; pivot at the root on the rump (+ swings out behind, - tucks in).",
+      "safeRotationDeg": [
+        -15,
+        30
+      ],
+      "parent": "rear"
+    },
+    {
+      "id": "leg-front-near",
+      "pivot": {
+        "x": 450,
+        "y": 466
+      },
+      "description": "Near front leg; pivot at the shoulder (+ back/folds under, - reaches forward).",
+      "safeRotationDeg": [
+        -30,
+        60
+      ],
+      "parent": "rear"
+    },
+    {
+      "id": "head",
+      "pivot": {
+        "x": 452,
+        "y": 426
+      },
+      "description": "Neck and head with mane, forelock, ears, blaze; pivot at the base of the neck (+ nods down, - lifts). Neck base hidden behind the body.",
+      "safeRotationDeg": [
+        -20,
+        20
+      ],
+      "parent": "rear"
+    },
+    {
+      "id": "body",
+      "pivot": {
+        "x": 322,
+        "y": 452
+      },
+      "description": "Torso; covers the tops of all legs and the neck base. Pivot near the centre for a gentle sway.",
+      "safeRotationDeg": [
+        -4,
+        4
+      ],
+      "parent": "rear"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 160" width="190" height="160">
+  <g id="leg-far" data-pivot-x="98" data-pivot-y="116" style="transform-box: view-box; transform-origin: 98px 116px">
+    <path d="M98,116 L99,137 M99,137 L109,139 M99,137 L107,133 M99,137 L92,139" fill="none" stroke="#3a2a24" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M98,116 L99,137 M99,137 L109,139 M99,137 L107,133 M99,137 L92,139" fill="none" stroke="#c98236" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g id="leg-near" data-pivot-x="88" data-pivot-y="118" style="transform-box: view-box; transform-origin: 88px 118px">
+    <path d="M88,118 L89,139 M89,139 L99,141 M89,139 L97,135 M89,139 L82,141" fill="none" stroke="#3a2a24" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M88,118 L89,139 M89,139 L99,141 M89,139 L97,135 M89,139 L82,141" fill="none" stroke="#e59a45" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g id="body" data-pivot-x="92" data-pivot-y="116" style="transform-box: view-box; transform-origin: 92px 116px">
+    <g id="wing-far" data-pivot-x="108" data-pivot-y="70" style="transform-box: view-box; transform-origin: 108px 70px">
+      <defs><clipPath id="bird-clip-wing-far"><path d="M114 64 C102 56 76 62 62 78 C58 82 54 86 48 90 C54 94 62 94 68 92 C64 96 58 100 54 104 C66 106 78 102 88 96 C102 90 120 76 114 64 Z"/></clipPath></defs>
+      <path d="M114 64 C102 56 76 62 62 78 C58 82 54 86 48 90 C54 94 62 94 68 92 C64 96 58 100 54 104 C66 106 78 102 88 96 C102 90 120 76 114 64 Z" fill="#336fa8"/>
+      <g clip-path="url(#bird-clip-wing-far)"><path d="M76 70 C86 64 98 62 108 64" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.3"/></g>
+      <path d="M114 64 C102 56 76 62 62 78 C58 82 54 86 48 90 C54 94 62 94 68 92 C64 96 58 100 54 104 C66 106 78 102 88 96 C102 90 120 76 114 64 Z" fill="none" stroke="#3a2a24" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M70 86 C78 88 86 86 92 82" fill="none" stroke="#3a2a24" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" opacity="0.4"/>
+    </g>
+    <g id="tail" data-pivot-x="62" data-pivot-y="96" style="transform-box: view-box; transform-origin: 62px 96px">
+      <defs><clipPath id="bird-clip-tail"><path d="M66,90 C50,88 30,94 16,106 C24,112 36,112 46,108 C40,116 36,124 34,132 C48,128 62,116 74,102 Z"/></clipPath></defs>
+      <path d="M66,90 C50,88 30,94 16,106 C24,112 36,112 46,108 C40,116 36,124 34,132 C48,128 62,116 74,102 Z" fill="#3d88c8"/>
+      <g clip-path="url(#bird-clip-tail)"><path d="M30,106 C40,100 52,96 62,94" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.3"/></g>
+      <path d="M66,90 C50,88 30,94 16,106 C24,112 36,112 46,108 C40,116 36,124 34,132 C48,128 62,116 74,102 Z" fill="none" stroke="#3a2a24" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+    </g>
+    <g id="head" data-pivot-x="114" data-pivot-y="86" style="transform-box: view-box; transform-origin: 114px 86px">
+      <defs><clipPath id="bird-clip-head"><path d="M100,92 C92,74 94,48 114,38 C132,30 150,42 150,60 C150,76 140,84 132,92 Z"/></clipPath></defs>
+      <path d="M100,92 C92,74 94,48 114,38 C132,30 150,42 150,60 C150,76 140,84 132,92 Z" fill="#5aaee8"/>
+      <g clip-path="url(#bird-clip-head)"><path d="M106,52 C112,44 122,40 132,40" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.4"/><path d="M128,70 C140,66 150,64 152,70 L152,96 L124,96 Z" fill="#ffdcae"/></g>
+      <path d="M100,92 C92,74 94,48 114,38 C132,30 150,42 150,60 C150,76 140,84 132,92 Z" fill="none" stroke="#3a2a24" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <defs><clipPath id="bird-clip-beak"><path d="M146,54 C152,55 160,58 165,61 C160,64 152,67 146,68 Z"/></clipPath></defs>
+      <path d="M146,54 C152,55 160,58 165,61 C160,64 152,67 146,68 Z" fill="#f2a23a"/>
+      <path d="M146,54 C152,55 160,58 165,61 C160,64 152,67 146,68 Z" fill="none" stroke="#3a2a24" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+      <ellipse cx="128" cy="54" rx="6.6" ry="8.2" fill="#2b201d"/>
+      <circle cx="130.5" cy="50.7" r="2.5" fill="#ffffff"/>
+      <circle cx="126.1" cy="57.9" r="1.1" fill="#ffffff"/>
+      <ellipse cx="136" cy="68" rx="6" ry="3.8" fill="#f39a98" opacity="0.45"/>
+    </g>
+    <defs><clipPath id="bird-clip-torso"><path d="M50,82 C54,62 84,54 108,60 C130,66 138,88 132,106 C126,120 108,126 88,124 C64,122 46,106 50,82 Z"/></clipPath></defs>
+    <path d="M50,82 C54,62 84,54 108,60 C130,66 138,88 132,106 C126,120 108,126 88,124 C64,122 46,106 50,82 Z" fill="#5aaee8"/>
+    <g clip-path="url(#bird-clip-torso)"><path d="M96,92 C114,88 134,92 134,104 C128,120 108,126 88,124 C70,122 60,112 62,104 C76,106 88,100 96,92 Z" fill="#ffdcae"/><path d="M40,108 C70,128 110,130 140,106 L140,140 L40,140 Z" fill="#5a3a30" opacity="0.15"/><path d="M66,68 C78,60 92,58 104,60" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.4"/></g>
+    <path d="M50,82 C54,62 84,54 108,60 C130,66 138,88 132,106 C126,120 108,126 88,124 C64,122 46,106 50,82 Z" fill="none" stroke="#3a2a24" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <g id="wing-near" data-pivot-x="104" data-pivot-y="76" style="transform-box: view-box; transform-origin: 104px 76px">
+      <defs><clipPath id="bird-clip-wing-near"><path d="M110 70 C98 62 72 68 58 84 C54 88 50 92 44 96 C50 100 58 100 64 98 C60 102 54 106 50 110 C62 112 74 108 84 102 C98 96 116 82 110 70 Z"/></clipPath></defs>
+      <path d="M110 70 C98 62 72 68 58 84 C54 88 50 92 44 96 C50 100 58 100 64 98 C60 102 54 106 50 110 C62 112 74 108 84 102 C98 96 116 82 110 70 Z" fill="#3d88c8"/>
+      <g clip-path="url(#bird-clip-wing-near)"><path d="M72 76 C82 70 94 68 104 70" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.3"/></g>
+      <path d="M110 70 C98 62 72 68 58 84 C54 88 50 92 44 96 C50 100 58 100 64 98 C60 102 54 106 50 110 C62 112 74 108 84 102 C98 96 116 82 110 70 Z" fill="none" stroke="#3a2a24" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M66 92 C74 94 82 92 88 88" fill="none" stroke="#3a2a24" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" opacity="0.4"/>
+    </g>
+  </g>
+</svg>

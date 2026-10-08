@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 320" width="340" height="320">
+  <g id="leg-far" data-pivot-x="170" data-pivot-y="238" style="transform-box: view-box; transform-origin: 170px 238px">
+    <path d="M170,238 C170,263.5 171,279 172,284" fill="none" stroke="#3a2a24" stroke-width="14.0" stroke-linecap="round"/>
+    <path d="M170,238 C170,263.5 171,279 172,284" fill="none" stroke="#d9832a" stroke-width="7" stroke-linecap="round"/>
+    <path d="M166,283 C178,279 194,281 198,287 C196,290 174,290 164,289 C162,287 163,284 166,283 Z" fill="#d9832a" stroke="#3a2a24" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M176,283 L180,288 M184,282 L188,288" fill="none" stroke="#3a2a24" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" opacity="0.5"/>
+  </g>
+  <g id="leg-near" data-pivot-x="152" data-pivot-y="240" style="transform-box: view-box; transform-origin: 152px 240px">
+    <path d="M152,240 C152,266.0 153,282 154,287" fill="none" stroke="#3a2a24" stroke-width="14.0" stroke-linecap="round"/>
+    <path d="M152,240 C152,266.0 153,282 154,287" fill="none" stroke="#f59a32" stroke-width="7" stroke-linecap="round"/>
+    <path d="M148,286 C160,282 176,284 180,290 C178,293 156,293 146,292 C144,290 145,287 148,286 Z" fill="#f59a32" stroke="#3a2a24" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M158,286 L162,291 M166,285 L170,291" fill="none" stroke="#3a2a24" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" opacity="0.5"/>
+  </g>
+  <g id="body" data-pivot-x="160" data-pivot-y="238" style="transform-box: view-box; transform-origin: 160px 238px">
+    <g id="wing-far" data-pivot-x="192" data-pivot-y="180" style="transform-box: view-box; transform-origin: 192px 180px">
+      <defs><clipPath id="duck-clip-wing-far"><path d="M196 172 C178 162 144 166 122 182 C114 186 106 188 98 190 C102 196 110 200 118 200 C112 204 104 208 98 212 C106 218 116 218 124 216 C120 220 114 224 110 228 C126 232 146 226 160 220 C174 222 188 214 198 200 C206 190 206 178 196 172 Z"/></clipPath></defs>
+      <path d="M196 172 C178 162 144 166 122 182 C114 186 106 188 98 190 C102 196 110 200 118 200 C112 204 104 208 98 212 C106 218 116 218 124 216 C120 220 114 224 110 228 C126 232 146 226 160 220 C174 222 188 214 198 200 C206 190 206 178 196 172 Z" fill="#e2ad22"/>
+      <g clip-path="url(#duck-clip-wing-far)"><path d="M106 206 C136 228 176 224 210 198 L210 242 L106 242 Z" fill="#5a3a30" opacity="0.18"/><path d="M146 176 C162 170 178 170 190 174" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.35"/></g>
+      <path d="M196 172 C178 162 144 166 122 182 C114 186 106 188 98 190 C102 196 110 200 118 200 C112 204 104 208 98 212 C106 218 116 218 124 216 C120 220 114 224 110 228 C126 232 146 226 160 220 C174 222 188 214 198 200 C206 190 206 178 196 172 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M132 204 C140 208 148 208 154 204 M144 216 C152 218 160 216 166 212" fill="none" stroke="#3a2a24" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" opacity="0.4"/>
+    </g>
+    <g id="tail" data-pivot-x="100" data-pivot-y="196" style="transform-box: view-box; transform-origin: 100px 196px">
+      <path d="M110,196 C96,192 82,182 74,166 C72,158 78,154 84,158 C94,164 106,170 118,176 Z" fill="#f4c232" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    </g>
+    <g id="head" data-pivot-x="198" data-pivot-y="196" style="transform-box: view-box; transform-origin: 198px 196px">
+      <path d="M206,96 C204,84 210,76 218,78 C214,84 214,90 216,96 M216,96 C220,86 228,82 234,86 C228,88 224,92 222,98" fill="none" stroke="#3a2a24" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+      <defs><clipPath id="duck-clip-head"><path d="M178,214 C176,190 168,168 170,146 C172,108 200,90 226,96 C252,102 264,128 258,152 C254,170 238,180 230,192 C226,200 226,206 228,216 Z"/></clipPath></defs>
+      <path d="M178,214 C176,190 168,168 170,146 C172,108 200,90 226,96 C252,102 264,128 258,152 C254,170 238,180 230,192 C226,200 226,206 228,216 Z" fill="#ffd84f"/>
+      <g clip-path="url(#duck-clip-head)"><path d="M168,176 C200,192 236,186 262,160 L262,230 L168,230 Z" fill="#5a3a30" opacity="0.15"/><path d="M190,112 C200,102 214,98 226,100" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round" opacity="0.45"/></g>
+      <path d="M178,214 C176,190 168,168 170,146 C172,108 200,90 226,96 C252,102 264,128 258,152 C254,170 238,180 230,192 C226,200 226,206 228,216 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <defs><clipPath id="duck-clip-billb"><path d="M242,142 L270,142 C278,142 282,146 280,150 C274,156 256,156 246,152 Z"/></clipPath></defs>
+      <path d="M242,142 L270,142 C278,142 282,146 280,150 C274,156 256,156 246,152 Z" fill="#e0862a"/>
+      <path d="M242,142 L270,142 C278,142 282,146 280,150 C274,156 256,156 246,152 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <defs><clipPath id="duck-clip-billt"><path d="M240,130 C254,122 276,124 284,134 C286,140 280,144 268,144 L242,144 Z"/></clipPath></defs>
+      <path d="M240,130 C254,122 276,124 284,134 C286,140 280,144 268,144 L242,144 Z" fill="#f7a13a"/>
+      <g clip-path="url(#duck-clip-billt)"><path d="M252,130 C260,127 270,127 276,130" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.45"/></g>
+      <path d="M240,130 C254,122 276,124 284,134 C286,140 280,144 268,144 L242,144 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <ellipse cx="270" cy="133" rx="2.2" ry="1.6" fill="#3a2a24" opacity="0.6"/>
+      <ellipse cx="222" cy="128" rx="9.4" ry="11.7" fill="#2b201d"/>
+      <circle cx="225.5" cy="123.3" r="3.6" fill="#ffffff"/>
+      <circle cx="219.3" cy="133.5" r="1.6" fill="#ffffff"/>
+      <ellipse cx="230" cy="152" rx="9" ry="5.5" fill="#f39a98" opacity="0.45"/>
+    </g>
+    <defs><clipPath id="duck-clip-torso"><path d="M96,186 C112,164 156,160 194,166 C230,172 250,196 248,222 C246,248 222,262 186,264 C146,266 108,258 94,236 C86,222 88,200 96,186 Z"/></clipPath></defs>
+    <path d="M96,186 C112,164 156,160 194,166 C230,172 250,196 248,222 C246,248 222,262 186,264 C146,266 108,258 94,236 C86,222 88,200 96,186 Z" fill="#ffd84f"/>
+    <g clip-path="url(#duck-clip-torso)"><path d="M80,236 C130,262 200,266 256,230 L256,290 L80,290 Z" fill="#5a3a30" opacity="0.15"/><path d="M118,176 C140,166 166,164 186,168" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.45"/></g>
+    <path d="M96,186 C112,164 156,160 194,166 C230,172 250,196 248,222 C246,248 222,262 186,264 C146,266 108,258 94,236 C86,222 88,200 96,186 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <g id="wing-near" data-pivot-x="186" data-pivot-y="186" style="transform-box: view-box; transform-origin: 186px 186px">
+      <defs><clipPath id="duck-clip-wing-near"><path d="M190 180 C172 170 138 174 116 190 C108 194 100 196 92 198 C96 204 104 208 112 208 C106 212 98 216 92 220 C100 226 110 226 118 224 C114 228 108 232 104 236 C120 240 140 234 154 228 C168 230 182 222 192 208 C200 198 200 186 190 180 Z"/></clipPath></defs>
+      <path d="M190 180 C172 170 138 174 116 190 C108 194 100 196 92 198 C96 204 104 208 112 208 C106 212 98 216 92 220 C100 226 110 226 118 224 C114 228 108 232 104 236 C120 240 140 234 154 228 C168 230 182 222 192 208 C200 198 200 186 190 180 Z" fill="#f4c232"/>
+      <g clip-path="url(#duck-clip-wing-near)"><path d="M100 214 C130 236 170 232 204 206 L204 250 L100 250 Z" fill="#5a3a30" opacity="0.18"/><path d="M140 184 C156 178 172 178 184 182" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" opacity="0.35"/></g>
+      <path d="M190 180 C172 170 138 174 116 190 C108 194 100 196 92 198 C96 204 104 208 112 208 C106 212 98 216 92 220 C100 226 110 226 118 224 C114 228 108 232 104 236 C120 240 140 234 154 228 C168 230 182 222 192 208 C200 198 200 186 190 180 Z" fill="none" stroke="#3a2a24" stroke-width="4.5" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M126 212 C134 216 142 216 148 212 M138 224 C146 226 154 224 160 220" fill="none" stroke="#3a2a24" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" opacity="0.4"/>
+    </g>
+  </g>
+  <g id="swim" data-pivot-x="165" data-pivot-y="238" style="transform-box: view-box; transform-origin: 165px 238px" display="none">
+    <path d="M50,238 C100,232 230,232 284,238 C296,248 286,264 262,268 L72,268 C50,264 40,248 50,238 Z" fill="#8fd0ee" opacity="0.92"/>
+    <path d="M50,238 C100,232 230,232 284,238" fill="none" stroke="#3a2a24" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M64,250 C80,246 100,246 116,250" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <path d="M220,252 C236,248 256,248 272,252" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <path d="M140,260 C152,257 168,257 180,260" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.55"/>
+  </g>
+</svg>

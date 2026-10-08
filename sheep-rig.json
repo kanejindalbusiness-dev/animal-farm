@@ -1,0 +1,104 @@
+{
+  "file": "sheep.svg",
+  "viewBox": "0 0 470 390",
+  "groundLineY": 356,
+  "facing": "right",
+  "paintOrderBackToFront": [
+    "leg-back-far",
+    "leg-front-far",
+    "tail",
+    "leg-back-near",
+    "leg-front-near",
+    "body",
+    "head"
+  ],
+  "rotationSign": "CSS rotate(); positive = clockwise on screen",
+  "scaleToCowUnits": 0.952,
+  "heightRelativeToCow": 0.68,
+  "parts": [
+    {
+      "id": "leg-back-far",
+      "pivot": {
+        "x": 184,
+        "y": 262
+      },
+      "description": "Far hind leg (darker); pivot at the hip, top hidden under the wool (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "leg-front-far",
+      "pivot": {
+        "x": 270,
+        "y": 264
+      },
+      "description": "Far front leg (darker); pivot at the shoulder under the wool (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "tail",
+      "pivot": {
+        "x": 100,
+        "y": 196
+      },
+      "description": "Little wool puff tail; pivot at its root (+ flicks up/out, - tucks down).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "leg-back-near",
+      "pivot": {
+        "x": 152,
+        "y": 266
+      },
+      "description": "Near hind leg; pivot at the hip under the wool (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "leg-front-near",
+      "pivot": {
+        "x": 300,
+        "y": 268
+      },
+      "description": "Near front leg; pivot at the shoulder under the wool (+ back, - forward).",
+      "safeRotationDeg": [
+        -25,
+        25
+      ]
+    },
+    {
+      "id": "body",
+      "pivot": {
+        "x": 220,
+        "y": 222
+      },
+      "description": "Fluffy wool body; covers the tops of all four legs. Pivot near the centre for a gentle sway or bob.",
+      "safeRotationDeg": [
+        -4,
+        4
+      ]
+    },
+    {
+      "id": "head",
+      "pivot": {
+        "x": 334,
+        "y": 196
+      },
+      "description": "Dark face with wool tuft, ear, eye; pivot at the neck inside the wool (+ nods down to graze, - lifts).",
+      "safeRotationDeg": [
+        -20,
+        22
+      ]
+    }
+  ]
+}
