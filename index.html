@@ -8,14 +8,19 @@
   html, body {
     margin: 0;
     height: 100%;
+    height: 100dvh;
     overflow: hidden;
     background: #a9d9f0;
+    touch-action: none;
   }
   #stage {
     position: fixed;
     inset: 0;
+    height: 100%;
+    height: 100dvh;
     overflow: hidden;
     background: #a9d9f0;
+    touch-action: none;
   }
   #ground-fill {
     position: absolute;
@@ -206,6 +211,19 @@
     padding: 0;
     overflow: visible;
   }
+  .walker .tap {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
   .clip {
     width: 100%;
     height: 100%;
@@ -275,6 +293,7 @@
     text-align: center;
     box-sizing: border-box;
     font-family: "Comic Sans MS", "Chalkboard SE", "Segoe Print", Cantarell, "Noto Sans", "Trebuchet MS", sans-serif;
+    touch-action: none;
   }
   .card-top {
     display: flex;
@@ -647,6 +666,10 @@
       animal.kind = animal.sound.replace(".mp3", "");
       animal.el = walkers[i];
       animal.clip = walkers[i].querySelector(".clip");
+      var tap = document.createElement("div");
+      tap.className = "tap";
+      animal.el.appendChild(tap);
+      animal.tap = tap;
       animal.h = tall[animal.kind];
       animal.w = animal.h * (animal.kind === "cow" ? (372 / 316) : 1.05) * (9 / 16);
       animal.slack = slackOf[animal.kind];
@@ -3209,6 +3232,11 @@
       var vb = { x: 0, y: 0, w: 1280, h: 720 };
       var vw = document.documentElement.clientWidth || window.innerWidth;
       var vh = document.documentElement.clientHeight || window.innerHeight;
+      var vv = window.visualViewport;
+      if (vv) {
+        if (vv.width > 1 && vv.width < vw) vw = vv.width;
+        if (vv.height > 1 && vv.height < vh) vh = vv.height;
+      }
       var aspect = art.w / art.h;
       var fw = vw;
       var fh = fw / aspect;
@@ -3383,6 +3411,7 @@
     }
 
     window.addEventListener("resize", fitView);
+    if (window.visualViewport) window.visualViewport.addEventListener("resize", fitView);
     playTitle();
 
     function closeCard() {
@@ -3434,12 +3463,99 @@
       spaceHeld = false;
     });
 
+    var phoneMedia = window.matchMedia("(hover: none) and (pointer: coarse)");
+    var phoneInput = phoneMedia.matches;
+    function readPhoneInput() {
+      phoneInput = phoneMedia.matches;
+      return phoneInput;
+    }
+    if (phoneMedia.addEventListener) phoneMedia.addEventListener("change", readPhoneInput);
+    else if (phoneMedia.addListener) phoneMedia.addListener(readPhoneInput);
+    function isPhone() {
+      return readPhoneInput();
+    }
+
     function titlePointer(event) {
+      if (isPhone()) return;
       if (farmOn) return;
       event.preventDefault();
     }
     ["click", "pointerdown", "pointerup", "mousedown", "mouseup", "touchstart", "contextmenu"].forEach(function (type) {
       document.addEventListener(type, titlePointer);
+    });
+
+    var tapStart = null;
+    function tappedAnimal(x, y) {
+      var best = -1;
+      var bestD = Infinity;
+      for (var i = 0; i < herd.length; i++) {
+        var animal = herd[i];
+        var pad = animal.tap;
+        var el = animal.el;
+        if (!pad || !el) continue;
+        var hit = pad.getBoundingClientRect();
+        if (hit.width < 1 || hit.height < 1) continue;
+        if (x < hit.left || x > hit.right || y < hit.top || y > hit.bottom) continue;
+        var box = el.getBoundingClientRect();
+        var cx = (box.left + box.right) / 2;
+        var cy = (box.top + box.bottom) / 2;
+        var dx = x - cx;
+        var dy = y - cy;
+        var d = dx * dx + dy * dy;
+        if (d < bestD) {
+          bestD = d;
+          best = i;
+        }
+      }
+      return best;
+    }
+
+    function phoneTap(x, y) {
+      if (!isPhone()) return;
+      if (!farmOn) {
+        if (!visualsReady) {
+          pendingEnter = true;
+          return;
+        }
+        revealFarm();
+        return;
+      }
+      startAudio();
+      var nowMs = Date.now();
+      if (!card.hidden) {
+        if (nowMs < cardLock) return;
+        closeCard();
+        return;
+      }
+      var hit = tappedAnimal(x, y);
+      if (hit < 0) return;
+      index = hit;
+      placeMarker(nowMs);
+      playSelected();
+      openCard();
+      cardLock = nowMs + 500;
+    }
+
+    document.addEventListener("pointerdown", function (event) {
+      if (!isPhone()) return;
+      if (event.button !== 0 || event.isPrimary === false) return;
+      tapStart = { x: event.clientX, y: event.clientY, id: event.pointerId };
+    });
+    document.addEventListener("pointerup", function (event) {
+      if (!isPhone()) return;
+      if (!tapStart || tapStart.id !== event.pointerId || event.button !== 0) return;
+      var dx = event.clientX - tapStart.x;
+      var dy = event.clientY - tapStart.y;
+      tapStart = null;
+      if (dx * dx + dy * dy > 400) return;
+      phoneTap(event.clientX, event.clientY);
+    });
+    document.addEventListener("pointercancel", function () {
+      tapStart = null;
+    });
+    document.addEventListener("contextmenu", function (event) {
+      if (!isPhone()) return;
+      event.preventDefault();
     });
 
     document.addEventListener("keydown", function (event) {
