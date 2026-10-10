@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Animal Farm</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Animal Farm">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
 <style>
   html, body {
     margin: 0;
@@ -12,6 +18,10 @@
     overflow: hidden;
     background: #a9d9f0;
     touch-action: none;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
   }
   #stage {
     position: fixed;
@@ -3348,6 +3358,38 @@
       return { x: b.x - pad, y: b.y - pad, w: b.width + pad * 2, h: b.height + pad * 2 };
     }
 
+    function isStandalone() {
+      if (document.documentElement.classList.contains("standalone")) return true;
+      if (document.body.classList.contains("standalone")) return true;
+      if (window.navigator && window.navigator.standalone) return true;
+      try {
+        if (window.matchMedia("(display-mode: standalone)").matches) return true;
+        if (window.matchMedia("(display-mode: fullscreen)").matches) return true;
+      } catch (e) {}
+      return false;
+    }
+
+    function markStandalone() {
+      if (isStandalone()) document.documentElement.classList.add("standalone");
+    }
+    markStandalone();
+
+    function safePads() {
+      var zero = { l: 0, r: 0, t: 0, b: 0 };
+      if (!isStandalone()) return zero;
+      var style = getComputedStyle(document.documentElement);
+      function read(name) {
+        var n = parseFloat(style.getPropertyValue(name));
+        return isFinite(n) ? n : 0;
+      }
+      return {
+        l: read("--safe-left"),
+        r: read("--safe-right"),
+        t: read("--safe-top"),
+        b: read("--safe-bottom")
+      };
+    }
+
     function placeScene(scene, svg) {
       var art = artBounds(svg);
       var vb = { x: 0, y: 0, w: 1280, h: 720 };
@@ -3358,6 +3400,9 @@
         if (vv.width > 1 && vv.width < vw) vw = vv.width;
         if (vv.height > 1 && vv.height < vh) vh = vv.height;
       }
+      var pad = safePads();
+      vw = Math.max(1, vw - pad.l - pad.r);
+      vh = Math.max(1, vh - pad.t - pad.b);
       var aspect = art.w / art.h;
       var fw = vw;
       var fh = fw / aspect;
@@ -3365,8 +3410,8 @@
         fh = vh;
         fw = fh * aspect;
       }
-      var left = (vw - fw) / 2;
-      var top = (vh - fh) / 2;
+      var left = pad.l + (vw - fw) / 2;
+      var top = pad.t + (vh - fh) / 2;
       var sx = left + (vb.x - art.x) / art.w * fw;
       var sy = top + (vb.y - art.y) / art.h * fh;
       var sw = vb.w / art.w * fw;
