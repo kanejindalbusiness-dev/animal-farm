@@ -1727,139 +1727,31 @@
       }
     }
 
-    function blockingOther(animal, x, y) {
-      var rect = bodyRect(animal, x, y);
-      var best = null;
-      var bestArea = 0;
-      for (var i = 0; i < herd.length; i++) {
-        var other = herd[i];
-        if (other === animal) continue;
-        var ob = bodyRect(other, other.x, other.y);
-        if (!rectsHit(rect, ob, 0.2)) continue;
-        var iw = Math.min(rect.r, ob.r + 0.2) - Math.max(rect.l, ob.l - 0.2);
-        var ih = Math.min(rect.b, ob.b + 0.2) - Math.max(rect.t, ob.t - 0.2);
-        var area = Math.max(0, iw) * Math.max(0, ih);
-        if (area > bestArea) {
-          bestArea = area;
-          best = other;
-        }
-      }
-      return best;
-    }
-
     function dogWalkHome(animal, dt, speed) {
       var goal = animal.goal;
       if (!goal) return false;
       var dx = (goal[0] - animal.x) * (16 / 9);
       var dy = goal[1] - animal.y;
       var dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 0.34) {
-        if (!offPathBlocked(animal, goal[0], goal[1])) {
-          animal.x = goal[0];
-          animal.y = goal[1];
-        }
-        animal.moving = dist > 0.04;
-        animal.vx = 0;
-        animal.vy = 0;
-        animal.stuck = 0;
-        animal.homeBias = 0;
-        return distPoint(animal.x, animal.y, goal[0], goal[1]) < 0.45;
-      }
-      var step = speed * dt;
-      if (step > dist) step = dist;
-      if (step < 0.0001) return false;
-      var ux = dx / dist;
-      var uy = dy / dist;
-      var straightX = animal.x + ux * step * (9 / 16);
-      var straightY = animal.y + uy * step;
-      var blocker = blockingOther(animal, animal.x, animal.y) || blockingOther(animal, straightX, straightY);
-      if (blocker) {
-        var mine = bodyRect(animal, animal.x, animal.y);
-        var theirs = bodyRect(blocker, blocker.x, blocker.y);
-        var sx = (mine.l + mine.r) / 2 - (theirs.l + theirs.r) / 2;
-        var sy = (mine.t + mine.b) / 2 - (theirs.t + theirs.b) / 2;
-        var mag = Math.sqrt(sx * sx + sy * sy) || 1;
-        sx /= mag;
-        sy /= mag;
-        if (!animal.homeBias) {
-          var cross = dx * sy - dy * sx;
-          animal.homeBias = cross < 0 ? -1 : 1;
-        }
-        var sign = animal.homeBias < 0 ? -1 : 1;
-        var tx = -sy * sign;
-        var ty = sx * sign;
-        var vx = sx * 0.45 + tx;
-        var vy = sy * 0.45 + ty;
-        var vm = Math.sqrt(vx * vx + vy * vy) || 1;
-        var nx = animal.x + (vx / vm) * step * (9 / 16);
-        var ny = animal.y + (vy / vm) * step;
-        if (!bodyInScene(animal, nx, ny)) {
-          animal.homeBias = -sign;
-          vx = sx * 0.45 - tx;
-          vy = sy * 0.45 - ty;
-          vm = Math.sqrt(vx * vx + vy * vy) || 1;
-          nx = animal.x + (vx / vm) * step * (9 / 16);
-          ny = animal.y + (vy / vm) * step;
-        }
-        if (bodyInScene(animal, nx, ny)) {
-          animal.x = nx;
-          animal.y = ny;
-          animal.moving = true;
-          animal.vx = vx / vm;
-          animal.vy = vy / vm;
-          animal.stuck = 0;
-          return false;
-        }
-      }
-      var bias = animal.homeBias || 0;
-      var angles = [0, bias, 0.45, -0.45, 0.9, -0.9, 1.35, -1.35, 1.8, -1.8, 2.3, -2.3, 2.6, -2.6];
-      if ((animal.stuck || 0) > 0.2 && bias) {
-        var side = bias < 0 ? -1 : 1;
-        angles = [bias, bias * 0.75, side * 1.2, side * 1.8, side * 2.4, 0, -side * 1.2, -side * 2.2];
-      }
-      var chosen = null;
-      for (var pass = 0; pass < 2 && !chosen; pass++) {
-        var cap = pass === 0 ? dist + step * 0.2 : dist + step;
-        for (var i = 0; i < angles.length; i++) {
-          var ang = angles[i];
-          var c = Math.cos(ang);
-          var s = Math.sin(ang);
-          var vx = ux * c - uy * s;
-          var vy = ux * s + uy * c;
-          var nx = animal.x + vx * step * (9 / 16);
-          var ny = animal.y + vy * step;
-          if (offPathBlocked(animal, nx, ny)) continue;
-          if (bias && Math.abs(ang) > 0.35 && (animal.stuck || 0) < 0.8 && Math.sign(ang) !== Math.sign(bias)) continue;
-          if (distPoint(nx, ny, goal[0], goal[1]) > cap) continue;
-          chosen = { x: nx, y: ny, vx: vx, vy: vy, ang: ang };
-          break;
-        }
-      }
-      if (!chosen) {
-        animal.stuck = (animal.stuck || 0) + dt;
-        var mag = Math.abs(bias);
-        var sign = bias < 0 ? -1 : 1;
-        if (mag < 0.4) mag = 0.9;
-        else if (animal.stuck > 1.1) {
-          sign = -sign;
-          mag = 0.9;
-          animal.stuck = 0.2;
-        } else mag = Math.min(2.6, mag + 0.45);
-        animal.homeBias = sign * mag;
+      animal.homeBias = 0;
+      animal.stuck = 0;
+      if (dist < 0.05) {
+        animal.x = goal[0];
+        animal.y = goal[1];
         animal.moving = false;
         animal.vx = 0;
         animal.vy = 0;
-        return false;
+        return true;
       }
-      animal.x = chosen.x;
-      animal.y = chosen.y;
+      var step = speed * dt;
+      if (step > dist) step = dist;
+      var ux = dx / dist;
+      var uy = dy / dist;
+      animal.x += ux * step * (9 / 16);
+      animal.y += uy * step;
       animal.moving = true;
-      animal.vx = chosen.vx;
-      animal.vy = chosen.vy;
-      animal.stuck = 0;
-      if (!animal.homeBias || Math.abs(chosen.ang) < 0.35 || Math.sign(chosen.ang) === Math.sign(animal.homeBias)) {
-        if (Math.abs(chosen.ang) > 0.2) animal.homeBias = chosen.ang;
-      }
+      animal.vx = ux;
+      animal.vy = uy;
       return false;
     }
 
@@ -2318,6 +2210,9 @@
               else if (bCharge && aMoved && !aCharge) revert(a);
               continue;
             }
+            var aHome = a.kind === "dog" && (a.phase === "scatter" || a.phase === "return");
+            var bHome = b.kind === "dog" && (b.phase === "scatter" || b.phase === "return");
+            if (aHome || bHome) continue;
             if (bMoved) revert(b);
             if (rectsHit(bodyRect(a, a.x, a.y), bodyRect(b, b.x, b.y), 0.08) && aMoved) revert(a);
           }
@@ -2721,7 +2616,13 @@
     function containSceneHeight() {
       var svg = farmSvgEl || titleSvgEl;
       if (!svg || !svg.getBBox) return 0;
+      var edge = svg.getAttribute("data-paint-edge");
+      if (edge) restorePaint(svg);
       var art = artBounds(svg);
+      if (edge) {
+        if (svg === titleSvgEl) extendTitlePaint(+edge);
+        else extendFarmPaint(+edge);
+      }
       var vw = document.documentElement.clientWidth || window.innerWidth;
       var vh = document.documentElement.clientHeight || window.innerHeight;
       var vv = window.visualViewport;
@@ -3713,26 +3614,177 @@
         }
       }
       if (farmSvgEl) {
-        ["#farm-coop", "#farm-pond"].forEach(function (sel) {
+        var host = farmSvgEl.closest ? farmSvgEl.closest(".scene") : null;
+        var restore = host && host.hidden;
+        if (restore) host.hidden = false;
+        ["#farm-coop", "#farm-pond", "#farm-sun"].forEach(function (sel) {
           var el = farmSvgEl.querySelector(sel);
           if (!el || !el.getBBox) return;
           var bb = el.getBBox();
+          if (!(bb.width > 1) || !(bb.height > 1)) return;
           if (bb.x < l) l = bb.x;
           if (bb.y < t) t = bb.y;
           if (bb.x + bb.width > r) r = bb.x + bb.width;
           if (bb.y + bb.height > b) b = bb.y + bb.height;
         });
+        var fg = farmSvgEl.querySelector("#farm-foreground");
+        if (fg) {
+          var nodes = fg.querySelectorAll("path, ellipse, circle");
+          for (var n = 0; n < nodes.length; n++) {
+            var node = nodes[n];
+            if (node.closest("clipPath") || node.closest("[clip-path]")) continue;
+            var nb = node.getBBox();
+            if (!(nb.width > 8) || nb.width > 140) continue;
+            if (nb.x < 1180 || nb.y < 400 || nb.y > 560) continue;
+            if (nb.x < l) l = nb.x;
+            if (nb.y < t) t = nb.y;
+            if (nb.x + nb.width > r) r = nb.x + nb.width;
+            if (nb.y + nb.height > b) b = nb.y + nb.height;
+          }
+        }
+        var trees = farmSvgEl.querySelector("#farm-trees");
+        if (trees) {
+          var crowns = trees.querySelectorAll("path, ellipse, circle");
+          for (var c = 0; c < crowns.length; c++) {
+            var crown = crowns[c];
+            if (crown.closest("clipPath") || crown.closest("[clip-path]")) continue;
+            var cb = crown.getBBox();
+            if (!(cb.width > 2) || !(cb.height > 2) || cb.x < 1100) continue;
+            if (cb.x < l) l = cb.x;
+            if (cb.y < t) t = cb.y;
+            if (cb.x + cb.width > r) r = cb.x + cb.width;
+            if (cb.y + cb.height > b) b = cb.y + cb.height;
+          }
+        }
+        if (restore) host.hidden = true;
       }
       if (l < 0) l = 0;
       if (t < 0) t = 0;
-      if (r > 1280) r = 1280;
       if (b > 720) b = 720;
       if (r - l < 8 || b - t < 8) return { l: 0, t: 0, r: 1280, b: 720 };
       return { l: l, t: t, r: r, b: b };
     }
 
+    function paintAttr(el, attr, value) {
+      if (!el) return;
+      var key = "data-orig-" + attr;
+      if (el.getAttribute(key) == null) el.setAttribute(key, el.getAttribute(attr) || "");
+      el.setAttribute(attr, value);
+    }
+
+    function restorePaint(svg) {
+      if (!svg || !svg.getAttribute("data-paint-edge")) return;
+      var nodes = svg.querySelectorAll("[data-orig-d], [data-orig-width]");
+      for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i];
+        if (node.getAttribute("data-orig-d") != null) {
+          node.setAttribute("d", node.getAttribute("data-orig-d"));
+          node.removeAttribute("data-orig-d");
+        }
+        if (node.getAttribute("data-orig-width") != null) {
+          node.setAttribute("width", node.getAttribute("data-orig-width"));
+          node.removeAttribute("data-orig-width");
+        }
+      }
+      svg.removeAttribute("data-paint-edge");
+    }
+
+    function restorePhonePaint() {
+      restorePaint(farmSvgEl);
+      restorePaint(titleSvgEl);
+    }
+
+    function extendFarmPaint(edge) {
+      if (!farmSvgEl) return;
+      var want = Math.ceil(edge);
+      if (+farmSvgEl.getAttribute("data-paint-edge") === want) return;
+      restorePaint(farmSvgEl);
+      var sky = farmSvgEl.querySelector("#farm-sky rect");
+      if (sky) paintAttr(sky, "width", String(want));
+      var paths = farmSvgEl.querySelectorAll("path");
+      for (var i = 0; i < paths.length; i++) {
+        var path = paths[i];
+        var d = path.getAttribute("d") || "";
+        var next = d;
+        if (d.indexOf("L1280,320 L0,320") !== -1) {
+          next = d.replace("L1280,320 L0,320", "L" + want + ",176 L" + want + ",320 L0,320");
+        } else if (d.indexOf("L1280,330 L0,330") !== -1) {
+          next = d.replace("L1280,330 L0,330", "L" + want + ",212 L" + want + ",330 L0,330");
+        } else if (d.indexOf("L1280,730 L0,730") !== -1) {
+          next = d.replace("L1280,730 L0,730", "L" + want + ",250 L" + want + ",730 L0,730");
+        }
+        if (next !== d) paintAttr(path, "d", next);
+      }
+      farmSvgEl.setAttribute("data-paint-edge", String(want));
+    }
+
+    function extendTitlePaint(edge) {
+      if (!titleSvgEl) return;
+      var want = Math.ceil(edge);
+      if (+titleSvgEl.getAttribute("data-paint-edge") === want) return;
+      restorePaint(titleSvgEl);
+      var sky = titleSvgEl.querySelector("#title-sky rect");
+      if (sky) paintAttr(sky, "width", String(want));
+      var paths = titleSvgEl.querySelectorAll("path");
+      for (var i = 0; i < paths.length; i++) {
+        var path = paths[i];
+        var d = path.getAttribute("d") || "";
+        var next = d;
+        if (d.indexOf("1280,264 L1280,460 L0,460") !== -1) {
+          next = d.replace("1280,264 L1280,460 L0,460", "1280,264 L" + want + ",264 L" + want + ",460 L0,460");
+        } else if (d.indexOf("1280,326 L1280,460 L0,460") !== -1) {
+          next = d.replace("1280,326 L1280,460 L0,460", "1280,326 L" + want + ",326 L" + want + ",460 L0,460");
+        } else if (d.indexOf("1280,384 L1280,452 L0,452") !== -1) {
+          next = d.replace("1280,384 L1280,452 L0,452", "1280,384 L" + want + ",384 L" + want + ",452 L0,452");
+        } else if (d.indexOf("1280,410 L1280,452 L0,452") !== -1) {
+          next = d.replace("1280,410 L1280,452 L0,452", "1280,410 L" + want + ",410 L" + want + ",452 L0,452");
+        }
+        if (next !== d) paintAttr(path, "d", next);
+      }
+      titleSvgEl.setAttribute("data-paint-edge", String(want));
+    }
+
+    function extendPhonePaint(edge) {
+      extendFarmPaint(edge);
+      extendTitlePaint(edge);
+    }
+
+    function fitPhoneWindow(keep, viewAspect) {
+      var margin = 8;
+      var winL = keep.l - margin;
+      var winT = keep.t - margin;
+      var winR = keep.r + margin;
+      var winB = keep.b + margin;
+      if (winL < 0) winL = 0;
+      if (winT < 0) winT = 0;
+      if (winB > 720) winB = 720;
+      if (winR > 1400) winR = 1400;
+      var winW = Math.max(1, winR - winL);
+      var winH = Math.max(1, winB - winT);
+      var winAspect = winW / winH;
+      if (winAspect > viewAspect + 0.0001) {
+        var needH = winW / viewAspect;
+        var extra = needH - winH;
+        var roomT = winT;
+        var roomB = 720 - winB;
+        var use = extra;
+        if (use > roomT + roomB) use = roomT + roomB;
+        var room = roomT + roomB;
+        var growT = room > 0 ? Math.min(roomT, use * roomT / room) : 0;
+        var growB = Math.min(roomB, use - growT);
+        if (growT + growB < use) growT = Math.min(roomT, use - growB);
+        winT -= growT;
+        winB += growB;
+      } else if (viewAspect > winAspect + 0.0001) {
+        var needW = winH * viewAspect;
+        var extraW = needW - winW;
+        if (extraW > winL) extraW = winL;
+        winL -= extraW;
+      }
+      return { l: winL, t: winT, r: winR, b: winB };
+    }
+
     function placeScene(scene, svg) {
-      var art = artBounds(svg);
       var vb = { x: 0, y: 0, w: 1280, h: 720 };
       var vw = document.documentElement.clientWidth || window.innerWidth;
       var vh = document.documentElement.clientHeight || window.innerHeight;
@@ -3745,53 +3797,44 @@
       vw = Math.max(1, vw - pad.l - pad.r);
       vh = Math.max(1, vh - pad.t - pad.b);
       if (phoneLook()) {
+        extendPhonePaint(1400);
         var keep = phoneKeepSvg();
-        var artL = 0;
-        var artT = 0;
-        var artR = vb.w;
-        var artB = vb.h;
-        var keepW = Math.max(1, keep.r - keep.l);
-        var keepH = Math.max(1, keep.b - keep.t);
-        var coverUnit = Math.max(vw / (artR - artL), vh / (artB - artT));
-        var maxUnit = Math.min(vw / keepW, vh / keepH);
-        var unit = coverUnit;
-        if (unit > maxUnit) unit = maxUnit;
-        var winW = vw / unit;
-        var winH = vh / unit;
-        var winL = (keep.l + keep.r) / 2 - winW / 2;
-        var winT = (keep.t + keep.b) / 2 - winH / 2;
-        if (winW <= artR - artL) {
-          if (winL < artL) winL = artL;
-          if (winL + winW > artR) winL = artR - winW;
-        }
-        if (winH <= artB - artT) {
-          if (winT < artT) winT = artT;
-          if (winT + winH > artB) winT = artB - winH;
-        }
-        if (winL > keep.l) winL = keep.l;
-        if (winL + winW < keep.r) winL = keep.r - winW;
-        if (winT > keep.t) winT = keep.t;
-        if (winT + winH < keep.b) winT = keep.b - winH;
+        var win = fitPhoneWindow(keep, vw / vh);
+        var winW = Math.max(1, win.r - win.l);
+        var winH = Math.max(1, win.b - win.t);
+        var unit = Math.min(vw / winW, vh / winH);
+        var bleed = 1;
+        var coverX = (vw + bleed * 2) / (winW * unit);
+        var coverY = (vh + bleed * 2) / (winH * unit);
+        var midX = (win.l + win.r) / 2;
+        var midY = (win.t + win.b) / 2;
+        var sxc = pad.l - bleed - unit * (midX + (win.l - midX) * coverX);
+        var syc = pad.t - bleed - unit * (midY + (win.t - midY) * coverY);
         var swc = unit * vb.w;
         var shc = unit * vb.h;
-        var sxc = pad.l - winL * unit;
-        var syc = pad.t - winT * unit;
+        var visX = sxc + unit * midX * (1 - coverX);
+        var visY = syc + unit * midY * (1 - coverY);
+        var visW = vb.w * unit * coverX;
+        var visH = vb.h * unit * coverY;
         var stage = document.getElementById("stage");
         if (stage) {
-          var skySpan = (320 / vb.h) * shc;
+          var skySpan = (320 / vb.h) * visH;
           stage.style.backgroundColor = "#93c45d";
           stage.style.backgroundImage = "linear-gradient(#a9d9f0, #e6f4ea)";
           stage.style.backgroundRepeat = "no-repeat";
           stage.style.backgroundSize = "100% " + skySpan + "px";
-          stage.style.backgroundPosition = "0px " + syc + "px";
+          stage.style.backgroundPosition = "0px " + visY + "px";
         }
         scene.style.left = sxc + "px";
         scene.style.top = syc + "px";
         scene.style.width = swc + "px";
         scene.style.height = shc + "px";
-        scene.style.transform = "none";
-        return { sx: sxc, sy: syc, sw: swc, sh: shc };
+        scene.style.transformOrigin = (midX / vb.w * 100) + "% " + (midY / vb.h * 100) + "%";
+        scene.style.transform = "scale(" + coverX + "," + coverY + ")";
+        return { sx: visX, sy: visY, sw: visW, sh: visH };
       }
+      restorePhonePaint();
+      var art = artBounds(svg);
       var stageDesk = document.getElementById("stage");
       if (stageDesk) {
         stageDesk.style.backgroundColor = "";
@@ -3817,6 +3860,7 @@
       scene.style.top = sy + "px";
       scene.style.width = sw + "px";
       scene.style.height = sh + "px";
+      scene.style.transformOrigin = "50% 50%";
       scene.style.transform = "none";
       return { sx: sx, sy: sy, sw: sw, sh: sh };
     }
