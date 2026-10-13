@@ -457,7 +457,7 @@
     border-radius: 16px;
     box-shadow: 0 3px 0 #ffe08a;
   }
-  @media (hover: none) and (pointer: coarse), (max-height: 500px) {
+  @media (hover: none) and (pointer: coarse) {
     .card {
       width: min(420px, 88vw);
       max-height: 60dvh;
@@ -472,9 +472,7 @@
     .card-top {
       margin: 0 2px 2px;
     }
-    .card .spark {
-      font-size: 1rem;
-    }
+    .card .spark,
     .card .sticker {
       display: none;
     }
@@ -581,13 +579,13 @@
     var birdChaseEnabled = true;
 
     var herd = [
-      { sound: "cow.mp3", still: "cow.svg", name: "Daisy the cow.", line: "She likes fresh green grass.", route: [[45.5, 58], [49.5, 56.8], [52.5, 59.5], [47, 61]], lap: 5200 },
+      { sound: "cow.mp3", still: "cow.svg", name: "Daisy the cow.", line: "She likes fresh green grass.", route: [[38.3, 67.5], [38.65, 68.0], [38.5, 69.4], [38.25, 68.6]], lap: 5200 },
       { sound: "sheep.mp3", still: "sheep.svg", name: "Fluff the sheep.", line: "She likes soft warm wool.", route: [[63.2, 47.6], [66, 47.0], [67.6, 48.4], [64.2, 49.0]], lap: 5000 },
       { sound: "chicken.mp3", still: "chicken.svg", name: "Dot the chicken.", line: "She likes laying an egg.", route: [[9, 68.3], [12.5, 69.3], [13.5, 71.8], [10.5, 70.3]], lap: 4200 },
       { sound: "horse.mp3", still: "horse.svg", name: "Ned the horse.", line: "He likes a fast gallop.", route: [[30, 76], [28, 82], [25, 88], [23.5, 91]], lap: 9000 },
       { sound: "duck.mp3", still: "duck.svg", name: "Quacky the duck.", line: "He likes a splash in the pond.", route: [[70, 80], [74.2, 84], [76.4, 87], [85, 74], [91, 78], [95.5, 73]], lap: 7000 },
       { sound: "dog.mp3", still: "dog.svg", name: "Buddy the dog.", line: "He likes a game of fetch.", route: [[46, 74], [51, 72], [55, 76.5], [48.5, 78.5]], lap: 4800 },
-      { sound: "goat.mp3", still: "goat.svg", name: "Nanny the goat.", line: "She likes to nibble the hedge.", route: [[65.2, 96.2], [66.4, 95.6], [66.6, 97.2], [65.4, 97.3]], lap: 5600 }
+      { sound: "goat.mp3", still: "goat.svg", name: "Nanny the goat.", line: "She likes to nibble the hedge.", route: [[65.0, 67.4], [67.0, 66.8], [66.5, 68.2], [64.8, 67.8]], lap: 5600 }
     ];
     var tall = { cow: 7.2, sheep: 5.6, chicken: 6.2, horse: 9.2, duck: 6.2, dog: 6.2, goat: 6.2 };
     var slackOf = { cow: 1.05, sheep: 0.2, chicken: 0.9, horse: 1.05, duck: 0.55, dog: 1.05, goat: 0.7 };
@@ -841,7 +839,7 @@
       }
       if (animal.kind === "goat") {
         animal.hedge = topPoint(animal.route);
-        animal.hedgeSpot = [64.2, 71.2];
+        animal.hedgeSpot = [66, 63.2];
         animal.phase = "approach";
         animal.phaseLen = 3.5;
         animal.eatAt = 3.5;
@@ -1692,6 +1690,7 @@
     function beginBirdLook(animal) {
       animal.phase = "look";
       animal.birdsAway = false;
+      animal.birdSat = null;
       parkBirds(animal, false);
       var spot = birdSpot(animal);
       animal.phase = "look";
@@ -1728,33 +1727,138 @@
       }
     }
 
+    function blockingOther(animal, x, y) {
+      var rect = bodyRect(animal, x, y);
+      var best = null;
+      var bestArea = 0;
+      for (var i = 0; i < herd.length; i++) {
+        var other = herd[i];
+        if (other === animal) continue;
+        var ob = bodyRect(other, other.x, other.y);
+        if (!rectsHit(rect, ob, 0.2)) continue;
+        var iw = Math.min(rect.r, ob.r + 0.2) - Math.max(rect.l, ob.l - 0.2);
+        var ih = Math.min(rect.b, ob.b + 0.2) - Math.max(rect.t, ob.t - 0.2);
+        var area = Math.max(0, iw) * Math.max(0, ih);
+        if (area > bestArea) {
+          bestArea = area;
+          best = other;
+        }
+      }
+      return best;
+    }
+
     function dogWalkHome(animal, dt, speed) {
       var goal = animal.goal;
-      var arrived = stepToward(animal, goal, dt, speed);
-      if (arrived || (animal.stuck || 0) < 0.2) return arrived;
+      if (!goal) return false;
       var dx = (goal[0] - animal.x) * (16 / 9);
       var dy = goal[1] - animal.y;
-      var dist = Math.sqrt(dx * dx + dy * dy) || 1;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 0.34) {
+        if (!offPathBlocked(animal, goal[0], goal[1])) {
+          animal.x = goal[0];
+          animal.y = goal[1];
+        }
+        animal.moving = dist > 0.04;
+        animal.vx = 0;
+        animal.vy = 0;
+        animal.stuck = 0;
+        animal.homeBias = 0;
+        return distPoint(animal.x, animal.y, goal[0], goal[1]) < 0.45;
+      }
       var step = speed * dt;
       if (step > dist) step = dist;
+      if (step < 0.0001) return false;
       var ux = dx / dist;
       var uy = dy / dist;
-      var angles = [0.55, -0.55, 1.05, -1.05, 1.55, -1.55];
-      for (var i = 0; i < angles.length; i++) {
-        var c = Math.cos(angles[i]);
-        var s = Math.sin(angles[i]);
-        var vx = ux * c - uy * s;
-        var vy = ux * s + uy * c;
-        var nx = animal.x + vx * step * (9 / 16);
-        var ny = animal.y + vy * step;
-        if (offPathBlocked(animal, nx, ny)) continue;
-        animal.x = nx;
-        animal.y = ny;
-        animal.moving = true;
-        animal.vx = vx;
-        animal.vy = vy;
-        animal.stuck = 0;
+      var straightX = animal.x + ux * step * (9 / 16);
+      var straightY = animal.y + uy * step;
+      var blocker = blockingOther(animal, animal.x, animal.y) || blockingOther(animal, straightX, straightY);
+      if (blocker) {
+        var mine = bodyRect(animal, animal.x, animal.y);
+        var theirs = bodyRect(blocker, blocker.x, blocker.y);
+        var sx = (mine.l + mine.r) / 2 - (theirs.l + theirs.r) / 2;
+        var sy = (mine.t + mine.b) / 2 - (theirs.t + theirs.b) / 2;
+        var mag = Math.sqrt(sx * sx + sy * sy) || 1;
+        sx /= mag;
+        sy /= mag;
+        if (!animal.homeBias) {
+          var cross = dx * sy - dy * sx;
+          animal.homeBias = cross < 0 ? -1 : 1;
+        }
+        var sign = animal.homeBias < 0 ? -1 : 1;
+        var tx = -sy * sign;
+        var ty = sx * sign;
+        var vx = sx * 0.45 + tx;
+        var vy = sy * 0.45 + ty;
+        var vm = Math.sqrt(vx * vx + vy * vy) || 1;
+        var nx = animal.x + (vx / vm) * step * (9 / 16);
+        var ny = animal.y + (vy / vm) * step;
+        if (!bodyInScene(animal, nx, ny)) {
+          animal.homeBias = -sign;
+          vx = sx * 0.45 - tx;
+          vy = sy * 0.45 - ty;
+          vm = Math.sqrt(vx * vx + vy * vy) || 1;
+          nx = animal.x + (vx / vm) * step * (9 / 16);
+          ny = animal.y + (vy / vm) * step;
+        }
+        if (bodyInScene(animal, nx, ny)) {
+          animal.x = nx;
+          animal.y = ny;
+          animal.moving = true;
+          animal.vx = vx / vm;
+          animal.vy = vy / vm;
+          animal.stuck = 0;
+          return false;
+        }
+      }
+      var bias = animal.homeBias || 0;
+      var angles = [0, bias, 0.45, -0.45, 0.9, -0.9, 1.35, -1.35, 1.8, -1.8, 2.3, -2.3, 2.6, -2.6];
+      if ((animal.stuck || 0) > 0.2 && bias) {
+        var side = bias < 0 ? -1 : 1;
+        angles = [bias, bias * 0.75, side * 1.2, side * 1.8, side * 2.4, 0, -side * 1.2, -side * 2.2];
+      }
+      var chosen = null;
+      for (var pass = 0; pass < 2 && !chosen; pass++) {
+        var cap = pass === 0 ? dist + step * 0.2 : dist + step;
+        for (var i = 0; i < angles.length; i++) {
+          var ang = angles[i];
+          var c = Math.cos(ang);
+          var s = Math.sin(ang);
+          var vx = ux * c - uy * s;
+          var vy = ux * s + uy * c;
+          var nx = animal.x + vx * step * (9 / 16);
+          var ny = animal.y + vy * step;
+          if (offPathBlocked(animal, nx, ny)) continue;
+          if (bias && Math.abs(ang) > 0.35 && (animal.stuck || 0) < 0.8 && Math.sign(ang) !== Math.sign(bias)) continue;
+          if (distPoint(nx, ny, goal[0], goal[1]) > cap) continue;
+          chosen = { x: nx, y: ny, vx: vx, vy: vy, ang: ang };
+          break;
+        }
+      }
+      if (!chosen) {
+        animal.stuck = (animal.stuck || 0) + dt;
+        var mag = Math.abs(bias);
+        var sign = bias < 0 ? -1 : 1;
+        if (mag < 0.4) mag = 0.9;
+        else if (animal.stuck > 1.1) {
+          sign = -sign;
+          mag = 0.9;
+          animal.stuck = 0.2;
+        } else mag = Math.min(2.6, mag + 0.45);
+        animal.homeBias = sign * mag;
+        animal.moving = false;
+        animal.vx = 0;
+        animal.vy = 0;
         return false;
+      }
+      animal.x = chosen.x;
+      animal.y = chosen.y;
+      animal.moving = true;
+      animal.vx = chosen.vx;
+      animal.vy = chosen.vy;
+      animal.stuck = 0;
+      if (!animal.homeBias || Math.abs(chosen.ang) < 0.35 || Math.sign(chosen.ang) === Math.sign(animal.homeBias)) {
+        if (Math.abs(chosen.ang) > 0.2) animal.homeBias = chosen.ang;
       }
       return false;
     }
@@ -1795,21 +1899,27 @@
         animal.vx = 0;
         animal.vy = 0;
         animal.pauseLeft = 0;
-        flyBirds(animal, dt, "back");
         var lookAt = animal.goal || birdSpot(animal);
         animal.facing = lookAt[0] < animal.x ? -1 : 1;
-        if ((birdsHome(animal) && animal.phaseT >= 0.35) || animal.phaseT > 4.5) {
-          settleBirds(animal);
-          animal.phase = "chase";
-          animal.phaseT = 0;
-          animal.stuck = 0;
-          animal.goal = birdSpot(animal);
-          animal.chaseFrom = [animal.x, animal.y];
-          animal.facing = animal.goal[0] < animal.x ? -1 : 1;
-          animal.faceLock = true;
-          animal.pauseLeft = 0;
-          setAction(animal, "run");
+        if (animal.birdSat == null) {
+          flyBirds(animal, dt, "back");
+          if (birdsHome(animal) || animal.phaseT > 7) {
+            settleBirds(animal);
+            animal.birdSat = animal.phaseT;
+          }
+          return;
         }
+        if (animal.phaseT < animal.birdSat + 3) return;
+        animal.birdSat = null;
+        animal.phase = "chase";
+        animal.phaseT = 0;
+        animal.stuck = 0;
+        animal.goal = birdSpot(animal);
+        animal.chaseFrom = [animal.x, animal.y];
+        animal.facing = animal.goal[0] < animal.x ? -1 : 1;
+        animal.faceLock = true;
+        animal.pauseLeft = 0;
+        setAction(animal, "run");
         return;
       }
       if (animal.phase === "chase") {
@@ -2601,14 +2711,11 @@
     var phoneScaleCachedH = 0;
 
     function phoneLook() {
-      var coarse = false;
       try {
-        coarse = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-      } catch (e) {}
-      var w = window.innerWidth || document.documentElement.clientWidth || 0;
-      var h = window.innerHeight || document.documentElement.clientHeight || 0;
-      if (w > 0 && h > 0 && Math.min(w, h) <= 500) return true;
-      return coarse;
+        return window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+      } catch (e) {
+        return false;
+      }
     }
 
     function containSceneHeight() {
@@ -3371,59 +3478,8 @@
         var need = bottom - (cover - sh * 0.012);
         if (need > extra) extra = need;
       }
-      var swm = farm.clientWidth || 1;
-      var shm = farm.clientHeight || 1;
       var left = tipX - markerW / 2;
       var baseTop = tipY - markerH + tipInset - gap - extra;
-      if (phoneLook() && animal.kind === "cow") {
-        var farmR = farm.getBoundingClientRect();
-        var barnL = (470 / 1280) * swm;
-        var barnR = (736 / 1280) * swm;
-        var barnT = (158 / 720) * shm;
-        var barnB = (400 / 720) * shm;
-        function cowMarkerBlocked(l, t) {
-          var vt = farmR.top + t;
-          var vl = farmR.left + l;
-          if (vt < 3 || vl < 3) return true;
-          if (vt + markerH > innerHeight - 3) return true;
-          if (vl + markerW > innerWidth - 3) return true;
-          var r = l + markerW;
-          var b = t + markerH;
-          if (r > barnL && l < barnR && b > barnT && t < barnB) return true;
-          return false;
-        }
-        var l = left;
-        var t = baseTop;
-        var step = Math.max(5, markerH * 0.18);
-        var guard = 0;
-        while (cowMarkerBlocked(l, t) && guard < 28) {
-          t -= step;
-          guard++;
-        }
-        if (cowMarkerBlocked(l, t)) {
-          t = 6 - farmR.top;
-          if (t < 1) t = 1;
-          guard = 0;
-          while (cowMarkerBlocked(l, t) && guard < 36) {
-            l -= step;
-            guard++;
-          }
-        }
-        if (cowMarkerBlocked(l, t)) {
-          l = left;
-          t = 6 - farmR.top;
-          if (t < 1) t = 1;
-          guard = 0;
-          while (cowMarkerBlocked(l, t) && guard < 36) {
-            l += step;
-            guard++;
-          }
-        }
-        left = l;
-        baseTop = t;
-        var minTop = 3 - farmR.top;
-        if (baseTop - bounce < minTop) baseTop = minTop + bounce;
-      }
       marker.style.left = left + "px";
       marker.style.top = (baseTop - bounce) + "px";
     }
@@ -3596,6 +3652,85 @@
       };
     }
 
+    function phoneKeepSvg() {
+      var S = 1.5;
+      var cowSpan = 342;
+      if (cowAnimal && cowAnimal.rig && cowAnimal.rig.bbox) {
+        var span = cowRigConfig.groundLineY - cowAnimal.rig.bbox.y;
+        if (span > 1) cowSpan = span;
+      }
+      var cowPx = 720 * 0.072 * S / cowSpan;
+      function spanOf(animal) {
+        if (animal.kind === "cow") {
+          var ch = 720 * 0.072 * S;
+          return { hw: ch * (372 / 316) / 2, hh: ch };
+        }
+        var rig = animal.rig;
+        var hw = 40;
+        var hh = 72;
+        if (rig && rig.bbox && rig.config) {
+          var bb = rig.bbox;
+          var vis = rig.config.groundLineY - bb.y;
+          if (vis < 1) vis = bb.height || 1;
+          var sc = (rig.config.scaleToCowUnits || 1) * (rig.config.sizeBoost || 1);
+          var px = cowPx * sc;
+          var paint = bb.height > 1 ? bb.height : vis;
+          var floorPct = { sheep: 5.6, chicken: 6.5, horse: 9.6, duck: 6.5, dog: 6.2, goat: 6.2 };
+          var floorPx = 720 * ((floorPct[animal.kind] || 0) / 100) * S;
+          if (floorPx > 0 && paint * px < floorPx) px = floorPx / paint;
+          hw = bb.width * px / 2;
+          hh = vis * px;
+        }
+        return { hw: hw, hh: hh };
+      }
+      var dogBox = null;
+      for (var d = 0; d < herd.length; d++) {
+        if (herd[d].kind === "dog") dogBox = spanOf(herd[d]);
+      }
+      var l = 1280;
+      var t = 720;
+      var r = 0;
+      var b = 0;
+      for (var i = 0; i < herd.length; i++) {
+        var animal = herd[i];
+        var box = spanOf(animal);
+        if (dogBox && (animal.kind === "chicken" || animal.kind === "duck")) {
+          if (box.hh < dogBox.hh) box.hh = dogBox.hh;
+          if (box.hw < dogBox.hw * 0.9) box.hw = dogBox.hw * 0.9;
+        }
+        var slack = animal.slack || 0;
+        var padX = slack * (9 / 16) / 100 * 1280 + 10;
+        var padY = slack / 100 * 720 + 8;
+        var pts = animal.route;
+        if (animal.hedgeSpot) pts = pts.concat([animal.hedgeSpot]);
+        for (var p = 0; p < pts.length; p++) {
+          var x = pts[p][0] / 100 * 1280;
+          var y = pts[p][1] / 100 * 720;
+          if (x - box.hw - padX < l) l = x - box.hw - padX;
+          if (x + box.hw + padX > r) r = x + box.hw + padX;
+          if (y - box.hh - padY < t) t = y - box.hh - padY;
+          if (y + padY > b) b = y + padY;
+        }
+      }
+      if (farmSvgEl) {
+        ["#farm-coop", "#farm-pond"].forEach(function (sel) {
+          var el = farmSvgEl.querySelector(sel);
+          if (!el || !el.getBBox) return;
+          var bb = el.getBBox();
+          if (bb.x < l) l = bb.x;
+          if (bb.y < t) t = bb.y;
+          if (bb.x + bb.width > r) r = bb.x + bb.width;
+          if (bb.y + bb.height > b) b = bb.y + bb.height;
+        });
+      }
+      if (l < 0) l = 0;
+      if (t < 0) t = 0;
+      if (r > 1280) r = 1280;
+      if (b > 720) b = 720;
+      if (r - l < 8 || b - t < 8) return { l: 0, t: 0, r: 1280, b: 720 };
+      return { l: l, t: t, r: r, b: b };
+    }
+
     function placeScene(scene, svg) {
       var art = artBounds(svg);
       var vb = { x: 0, y: 0, w: 1280, h: 720 };
@@ -3610,25 +3745,41 @@
       vw = Math.max(1, vw - pad.l - pad.r);
       vh = Math.max(1, vh - pad.t - pad.b);
       if (phoneLook()) {
-        var visL = -12;
-        var visR = 1324;
-        var visT = 108;
-        var visB = 712;
-        var spanX = visR - visL;
-        var spanY = visB - visT;
-        var unit = Math.max(vw / spanX, vh / spanY);
+        var keep = phoneKeepSvg();
+        var artL = 0;
+        var artT = 0;
+        var artR = vb.w;
+        var artB = vb.h;
+        var keepW = Math.max(1, keep.r - keep.l);
+        var keepH = Math.max(1, keep.b - keep.t);
+        var coverUnit = Math.max(vw / (artR - artL), vh / (artB - artT));
+        var maxUnit = Math.min(vw / keepW, vh / keepH);
+        var unit = coverUnit;
+        if (unit > maxUnit) unit = maxUnit;
+        var winW = vw / unit;
+        var winH = vh / unit;
+        var winL = (keep.l + keep.r) / 2 - winW / 2;
+        var winT = (keep.t + keep.b) / 2 - winH / 2;
+        if (winW <= artR - artL) {
+          if (winL < artL) winL = artL;
+          if (winL + winW > artR) winL = artR - winW;
+        }
+        if (winH <= artB - artT) {
+          if (winT < artT) winT = artT;
+          if (winT + winH > artB) winT = artB - winH;
+        }
+        if (winL > keep.l) winL = keep.l;
+        if (winL + winW < keep.r) winL = keep.r - winW;
+        if (winT > keep.t) winT = keep.t;
+        if (winT + winH < keep.b) winT = keep.b - winH;
         var swc = unit * vb.w;
         var shc = unit * vb.h;
-        var sxc = pad.l - visL * unit;
-        var syc = pad.t - visT * unit;
-        var extraX = spanX * unit - vw;
-        var extraY = spanY * unit - vh;
-        if (extraX > 0) sxc -= extraX;
-        if (extraY > 0) syc -= extraY / 2;
+        var sxc = pad.l - winL * unit;
+        var syc = pad.t - winT * unit;
         var stage = document.getElementById("stage");
         if (stage) {
           var skySpan = (320 / vb.h) * shc;
-          stage.style.backgroundColor = "#e6f4ea";
+          stage.style.backgroundColor = "#93c45d";
           stage.style.backgroundImage = "linear-gradient(#a9d9f0, #e6f4ea)";
           stage.style.backgroundRepeat = "no-repeat";
           stage.style.backgroundSize = "100% " + skySpan + "px";
@@ -3919,8 +4070,18 @@
       phoneInput = phoneMedia.matches;
       return phoneInput;
     }
+    function phoneCardDecor() {
+      var phone = isPhone();
+      var nodes = card.querySelectorAll(".spark, .sticker");
+      for (var i = 0; i < nodes.length; i++) {
+        var el = nodes[i];
+        if (el.getAttribute("data-mark") == null) el.setAttribute("data-mark", el.textContent);
+        el.textContent = phone ? "" : el.getAttribute("data-mark");
+      }
+    }
     function phoneInputChanged() {
       readPhoneInput();
+      phoneCardDecor();
       fitView();
     }
     if (phoneMedia.addEventListener) phoneMedia.addEventListener("change", phoneInputChanged);
@@ -3928,6 +4089,7 @@
     function isPhone() {
       return readPhoneInput();
     }
+    phoneCardDecor();
     updateTurnPrompt();
 
     function titlePointer(event) {
